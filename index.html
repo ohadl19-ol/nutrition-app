@@ -344,6 +344,56 @@ tr:last-child td{border-bottom:none}
 .switch input:checked+i::before{transform:translateX(20px)}
 [dir="rtl"] .switch input:checked+i::before{transform:translateX(-20px)}
 .danger-text{color:var(--bad)}
+/* ---------- meal card v2 ---------- */
+.meal2{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+.m2-head{display:flex;align-items:center;gap:9px;padding:12px 14px;color:#fff}
+.m2-head .m2-emoji{font-size:21px;flex:none}
+.m2-head .m2-name{font-weight:800;font-size:15.5px;flex:1;min-width:0}
+.m2-head .m2-time{font-size:11.5px;font-weight:700;background:rgba(255,255,255,.22);border-radius:999px;padding:2px 9px;flex:none}
+.m2-head .mini-btn{color:rgba(255,255,255,.92)}
+.m2-head .mini-btn:active{background:rgba(255,255,255,.15)}
+.m2-head .meal-check{width:38px;height:38px;min-height:38px;border-color:rgba(255,255,255,.6);background:transparent;color:transparent;flex:none}
+.meal2.done .meal-check{background:#fff;border-color:#fff;color:var(--accent)}
+.meal2.done .m2-name{text-decoration:line-through;opacity:.85}
+.c-sun{background:linear-gradient(135deg,#e8920a,#d96a1e)}
+.c-moon{background:linear-gradient(135deg,#4a3aa7,#2a78d6)}
+.c-bolt{background:linear-gradient(135deg,#d03b3b,#d95926)}
+.c-snack{background:linear-gradient(135deg,#c2447e,#7c5cd6)}
+.c-tips{background:linear-gradient(135deg,#0a8a44,#1baf7a)}
+.c-free{background:linear-gradient(135deg,#b07a10,#e8920a)}
+.c-info{background:linear-gradient(135deg,#52514e,#33322f)}
+.m2-cond{font-size:12px;color:var(--muted);font-weight:600;padding:9px 14px 0;line-height:1.5}
+.m2-body{padding:4px 14px 12px}
+.g-label{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:800;color:var(--text-2);margin:13px 0 2px;letter-spacing:.01em}
+.g-dot{width:8px;height:8px;border-radius:50%;flex:none}
+.m2-cols{display:grid;grid-template-columns:1fr 82px 82px;gap:8px;font-size:10.5px;color:var(--muted);font-weight:700;padding:6px 0 3px;border-bottom:1px solid var(--grid)}
+.m2-cols.no-after{grid-template-columns:1fr 82px}
+.m2-cols span:not(:first-child){text-align:center}
+.m2-row{display:grid;grid-template-columns:1fr 82px 82px;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--grid);font-size:13px}
+.m2-row.no-after{grid-template-columns:1fr 82px}
+.m2-row:last-child{border-bottom:none}
+.m2-item{font-weight:600;line-height:1.4}
+.tag{display:inline-block;border-radius:9px;padding:2.5px 6px;font-size:11px;font-weight:700;text-align:center;white-space:nowrap;justify-self:center;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.tag.before{background:var(--text);color:var(--bg)}
+.tag.after{background:#697a3e;color:#fff}
+[data-theme="dark"] .tag.after{background:#8a9c52;color:#15170a}
+.tag.plain{background:var(--surface-2);color:var(--muted)}
+.warn-line{display:flex;gap:6px;font-size:12.5px;font-weight:700;color:#b45309;margin-top:12px;line-height:1.55}
+[data-theme="dark"] .warn-line{color:#fab219}
+.hl-line{font-size:12.5px;font-weight:700;color:var(--good);margin-top:8px}
+.meal2.tips{border-color:rgba(12,163,12,.45);background:color-mix(in srgb,#0ca30c 6%,var(--surface))}
+.rest-tag{display:inline-flex;align-items:center;gap:6px;background:var(--bad-bg);color:var(--bad);border-radius:999px;padding:5px 13px;font-size:12.5px;font-weight:700;margin-bottom:12px}
+.tonly-tag{display:inline-block;background:rgba(255,255,255,.24);border-radius:999px;padding:2px 9px;font-size:10.5px;font-weight:700;flex:none}
+.m2-toggle{display:flex;align-items:center;gap:9px;padding:9px 14px 0;font-size:12.5px;font-weight:700;color:var(--text-2)}
+.m2-bullets{padding:6px 14px 12px;list-style:none}
+.m2-bullets li{position:relative;padding-inline-start:16px;margin:7px 0;font-size:13px;color:var(--text-2);line-height:1.55}
+.m2-bullets li::before{content:'•';position:absolute;inset-inline-start:2px;color:var(--accent-2);font-weight:800}
+/* ---------- workout plates & template ---------- */
+.plate-total{font-size:12px;font-weight:800;color:var(--accent-2);white-space:nowrap;min-width:58px;text-align:center;font-variant-numeric:tabular-nums}
+.bar-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:8px}
+.bar-row input{width:74px;border:1px solid var(--border);background:var(--surface-2);border-radius:10px;padding:6px 8px;min-height:38px;font-size:14px;text-align:center}
+.seg.mini{padding:3px;margin-bottom:8px}
+.seg.mini button{min-height:34px;padding:4px 8px;font-size:11.5px;border-radius:9px}
 @media(min-width:700px){
   .stat-row{grid-template-columns:repeat(3,1fr)}
   .chart-wrap canvas{height:230px}
@@ -396,7 +446,7 @@ tr:last-child td{border-bottom:none}
    All data in localStorage under one key. No external runtime deps.
    ============================================================ */
 const LS_KEY = 'nutritionApp';
-const DATA_VERSION = 1;
+const DATA_VERSION = 2;
 
 /* ---------------- i18n ---------------- */
 const I18N = {
@@ -456,9 +506,32 @@ const I18N = {
     'st.resetConfirm1':'לאפס את כל הנתונים? כל הארוחות, המדידות והאימונים יימחקו.',
     'st.resetConfirm2':'אישור אחרון: הפעולה תמחק הכול לצמיתות. בטוח?',
     'st.resetDone':'כל הנתונים אופסו',
-    'st.about':'גרסה 1.0 · כל הנתונים נשמרים במכשיר בלבד',
+    'st.about':'גרסה 2.0 · כל הנתונים נשמרים במכשיר בלבד',
     'chart.noData':'אין מספיק נתונים לגרף',
     'chart.table':'טבלה','chart.chart':'גרף',
+    'day.training':'🏋️ יום אימון','day.rest':'🛋️ יום מנוחה',
+    'day.restTag':'יום ללא אימון — ללא פחמימות',
+    'tag.before':'לפני בישול','tag.after':'אחרי בישול','tag.none':'לא מבושל',
+    'menu.colProduct':'מוצר','menu.colBefore':'לפני','menu.colAfter':'אחרי',
+    'menu.showCooked':'הצג במשקל מבושל',
+    'menu.trainingOnly':'⚡ יום אימון בלבד',
+    'menu.groupLabel':'שם קבוצה (למשל: חלבון — בחר אחד)','menu.addGroup':'+ הוספת קבוצה','menu.carbGroup':'קבוצת פחמימה (מוסתרת ביום מנוחה)',
+    'menu.mealCond':'שורת תנאים','menu.mealWarn':'הערת אזהרה (⚠️)','menu.mealEmoji':'אמוג׳י',
+    'menu.trainingOnlyFull':'מוצג ביום אימון בלבד (ארוחת העמסה)','menu.infoCard':'כרטיס מידע (ללא סימון ✓)',
+    'menu.itemFactorPh':'מקדם (ריק = כללי)',
+    'st.cookFactor':'מקדם גולמי ← מבושל','st.cookFactorSub':'ברירת מחדל 0.75 (הפחתת 25%)',
+    'st.neck':'היקף צוואר','st.neckSub':'חד־פעמי, לחישוב אחוז שומן',
+    'ms.needNeck':'להצגת אחוז שומן יש להזין גובה והיקף צוואר בהגדרות',
+    'wk.start':'התחל אימון','wk.template':'תבנית','wk.editTemplate':'עריכת תבנית אימון','wk.toFailure':'עד כשל',
+    'wk.entryTotal':'משקל כולל','wk.entryPlates':'צלחות + מוט','wk.perSide':'בצד','wk.bar':'מוט (ק״ג):',
+    'wk.fromTemplate':'האימון נוצר מהתבנית עם הערכים מהאימון הקודם — עדכן מה שהשתנה ושמור',
+    'ex.tchest':'חזה — לחיצת חזה / שכיבות סמיכות / מקבילים',
+    'ex.tback':'גב — מתח / פולי עליון אחיזה צרה',
+    'ex.tlegs':'רגליים — לחיצת רגליים / לאנץ׳ בולגרי',
+    'ex.tshoulders':'כתפיים — הרחקות לצדדים',
+    'ex.tbiceps':'יד קדמית — כפיפת מרפקים בעמידה',
+    'ex.ttriceps':'יד אחורית — פשיטת מרפקים בפולי / מאחורי הראש',
+    'ex.tabs':'בטן — כפיפות בטן על בוסו',
   },
   en: {
     'app.title':'Nutrition & Shred','app.sub':'Nutrition · Measurements · Workouts',
@@ -516,9 +589,32 @@ const I18N = {
     'st.resetConfirm1':'Reset all data? All meals, measurements and workouts will be deleted.',
     'st.resetConfirm2':'Final confirmation: this permanently deletes everything. Are you sure?',
     'st.resetDone':'All data has been reset',
-    'st.about':'Version 1.0 · All data stays on this device',
+    'st.about':'Version 2.0 · All data stays on this device',
     'chart.noData':'Not enough data for a chart',
     'chart.table':'Table','chart.chart':'Chart',
+    'day.training':'🏋️ Training day','day.rest':'🛋️ Rest day',
+    'day.restTag':'No training today — no carbs',
+    'tag.before':'Raw','tag.after':'Cooked','tag.none':'No cooking',
+    'menu.colProduct':'Product','menu.colBefore':'Raw','menu.colAfter':'Cooked',
+    'menu.showCooked':'Show cooked weight',
+    'menu.trainingOnly':'⚡ Training day only',
+    'menu.groupLabel':'Group label (e.g. Protein — pick one)','menu.addGroup':'+ Add group','menu.carbGroup':'Carb group (hidden on rest days)',
+    'menu.mealCond':'Condition line','menu.mealWarn':'Warning note (⚠️)','menu.mealEmoji':'Emoji',
+    'menu.trainingOnlyFull':'Shown on training days only (loading meal)','menu.infoCard':'Info card (no ✓ check)',
+    'menu.itemFactorPh':'Factor (empty = global)',
+    'st.cookFactor':'Raw → cooked factor','st.cookFactorSub':'Default 0.75 (25% reduction)',
+    'st.neck':'Neck circumference','st.neckSub':'One-time, used for body fat',
+    'ms.needNeck':'Set height and neck circumference in Settings to see body fat',
+    'wk.start':'Start workout','wk.template':'Template','wk.editTemplate':'Edit workout template','wk.toFailure':'To failure',
+    'wk.entryTotal':'Total weight','wk.entryPlates':'Plates + bar','wk.perSide':'Per side','wk.bar':'Bar (kg):',
+    'wk.fromTemplate':'Workout created from the template with your previous values — update what changed and save',
+    'ex.tchest':'Chest — bench press / push-ups / dips',
+    'ex.tback':'Back — pull-ups / close-grip pulldown',
+    'ex.tlegs':'Legs — leg press / Bulgarian lunge',
+    'ex.tshoulders':'Shoulders — lateral raises',
+    'ex.tbiceps':'Biceps — standing curls',
+    'ex.ttriceps':'Triceps — cable / overhead extensions',
+    'ex.tabs':'Abs — crunches on bosu ball',
   }
 };
 function t(key, vars){
@@ -542,11 +638,14 @@ function defaultState(){
       lang: 'he',
       theme: (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light',
       heightCm: null,
-      goals: { weight:null, waist:null, belly:null, arm:null, neck:null }
+      neckCm: null,          // one-time neck circumference for US Navy body fat
+      cookedFactor: 0.75,    // raw → cooked weight (25% reduction)
+      goals: { weight:null, waist:null, belly:null, arm:null }
     },
     mode: { current: 'cut', startDate: todayISO() },
-    menus: { cut: { meals: [] }, bulk: { meals: [] } },
+    menus: { cut: { meals: [] }, bulk: { meals: seedBulkMeals() } },
     checks: {},            // { 'YYYY-MM-DD': { cut:[mealId,...], bulk:[...] } }
+    dayTypes: {},          // { 'YYYY-MM-DD': 'training'|'rest' } explicit overrides
     conversions: [
       { id:'chicken', nameKey:'food.chicken', factor:0.70 },
       { id:'beef',    nameKey:'food.beef',    factor:0.70 },
@@ -555,17 +654,108 @@ function defaultState(){
       { id:'pasta',   nameKey:'food.pasta',   factor:2.25 },
       { id:'potato',  nameKey:'food.potato',  factor:0.92 }
     ],
-    measurements: [],      // [{id,date,weight,waist,belly,arm,neck}]
+    measurements: [],      // [{id,date,weight,waist,belly,arm,neck?}] neck kept for legacy data only
     exercises: [
       { id:'squat', nameKey:'ex.squat', hidden:false },
       { id:'deadlift', nameKey:'ex.deadlift', hidden:false },
       { id:'bench', nameKey:'ex.bench', hidden:false },
       { id:'pullup', nameKey:'ex.pullup', hidden:false },
       { id:'ohp', nameKey:'ex.ohp', hidden:false },
-      { id:'row', nameKey:'ex.row', hidden:false }
+      { id:'row', nameKey:'ex.row', hidden:false },
+      { id:'tchest', nameKey:'ex.tchest', hidden:false },
+      { id:'tback', nameKey:'ex.tback', hidden:false },
+      { id:'tlegs', nameKey:'ex.tlegs', hidden:false },
+      { id:'tshoulders', nameKey:'ex.tshoulders', hidden:false },
+      { id:'tbiceps', nameKey:'ex.tbiceps', hidden:false },
+      { id:'ttriceps', nameKey:'ex.ttriceps', hidden:false },
+      { id:'tabs', nameKey:'ex.tabs', hidden:false }
     ],
+    template: defaultTemplate(),  // fixed workout template [{exerciseId,sets,reps|null}]
+    exPrefs: {},           // { exerciseId: { entry:'total'|'plates', barWeight } }
     workouts: []           // [{id,date,entries:[{exerciseId,sets:[{reps,weight}]}]}]
   };
+}
+function defaultTemplate(){
+  return [
+    { exerciseId:'tchest',     sets:4, reps:8 },
+    { exerciseId:'tback',      sets:4, reps:8 },
+    { exerciseId:'tlegs',      sets:3, reps:8 },
+    { exerciseId:'tshoulders', sets:3, reps:15 },
+    { exerciseId:'tbiceps',    sets:3, reps:12 },
+    { exerciseId:'ttriceps',   sets:3, reps:12 },
+    { exerciseId:'tabs',       sets:3, reps:null }  // null = to failure
+  ];
+}
+/* Default bulk-mode menu (seeded only when the bulk menu is empty).
+   Meal schema v2: {id,name,emoji,color,time,cond,warn,trainingOnly,type,groups:[{id,label,carb,items}]}
+   Item: {id,name,qty,rawness:'raw'|'cooked'|'none',factor?} */
+function seedBulkMeals(){
+  const g = (label, items, carb) => ({ id: uid(), label, carb: !!carb,
+    items: items.map(it => ({ id: uid(), name: it[0], qty: it[1] || '', rawness: it[2] || 'none' })) });
+  const proteinOptions = () => [
+    ['בשר רזה: חזה עוף / פילה עוף / כבד עוף / שייטל / פילה בקר / פסטרמה / חזה הודו / כתף בקר', '300 גרם', 'raw'],
+    ['בשר שמן: סינטה / פרגית / בשר טחון / כרעיים עוף', '200 גרם', 'raw'],
+    ['דג רזה (הכל למעט סלמון ודניס)', '350 גרם', 'raw'],
+    ['דג שמן: סלמון / דניס', '200 גרם', 'raw'],
+    ['טונה במים', '350 גרם'],
+    ['טונה בשמן', '200 גרם'],
+    ["קוטג' / גבינה לבנה 5%", '420 גרם'],
+    ['גבינות קשות 5%: בולגרית / פטה / חמד / צפתית', '320 גרם'],
+    ['גבינה צהובה 9%', '7 פרוסות'],
+    ['ביצים (חצי מכמות החלמון)', '7 יחידות'],
+    ['משקה חלבון: 25 גר׳ חלבון, עד 140 קק״ל, 0% שומן, 0% פחמימה', '3 יחידות'],
+    ['WHEY', '3 סקופים'],
+    ['מעדן חלבון: 20 גר׳ חלבון, עד 8 גר׳ פחמימה, עד 130 קק״ל', '3 יחידות']
+  ];
+  const veg = () => g('ירקות', [['ירקות צבעוניים לבחירה', '250 גרם', 'raw']]);
+  return [
+    { id: uid(), name:'ארוחת צהריים', emoji:'🌞', color:'sun', time:'12:00', type:'meal',
+      cond:'לפחות 3 שעות מההתעוררות · בערך 12:00 · הכמויות לפני בישול · אפשר לשלב אופציות',
+      groups: [ g('חלבון — בחר אחד', proteinOptions()), veg() ] },
+    { id: uid(), name:'ארוחת ביניים', emoji:'🍫', color:'snack', time:'', type:'meal',
+      cond:'לא חובה',
+      groups: [ g('בחר אחד', [
+        ['מעדן חלבון / משקה חלבון', '1 יחידה'],
+        ['ביצים', '2 יחידות'],
+        ['גבינה צהובה 9%', '2 פרוסות'],
+        ["טונה / קוטג'", '100 גרם']
+      ]) ] },
+    { id: uid(), name:'ארוחת ערב', emoji:'🌙', color:'moon', time:'', type:'meal',
+      cond:'אותן אופציות חלבון כמו בצהריים · הכמויות לפני בישול',
+      groups: [ g('חלבון — בחר אחד', proteinOptions()), veg() ] },
+    { id: uid(), name:'ארוחת העמסה', emoji:'⚡', color:'bolt', time:'', type:'meal', trainingOnly:true,
+      cond:'יום אימון בלבד · מחליפה את הארוחה הסמוכה לאימון · לאכול משעה עד 4 שעות מסוף האימון',
+      warn:'קפה חזק כחצי שעה לפני האימון · לא מוותרים על ההעמסה גם אם היו חריגות בשבוע',
+      groups: [
+        g('חלבון — בחר אחד', [
+          ['בשר רזה', '300 גרם', 'raw'],
+          ['דג רזה', '350 גרם', 'raw'],
+          ['גבינה צהובה 9%', '7 פרוסות']
+        ]),
+        g('פחמימה — בחר אחד', [
+          ['אורז לבן', '800 גרם', 'cooked'],
+          ['תפוח אדמה', '1200 גרם', 'raw'],
+          ['לחם לבן', '400 גרם']
+        ], true),
+        g('או בחוץ — בחר אחד', [
+          ['משולשי פיצה', '4.5 יחידות'],
+          ['רולים סושי עם דג', '4 יחידות']
+        ], true)
+      ] },
+    { id: uid(), name:'כללי התפריט', emoji:'📋', color:'tips', time:'', type:'info',
+      groups: [ g('', [
+        ['שוקלים לפני בישול: בשר, עוף, דגים, ירקות ותפוח אדמה · כל השאר אחרי בישול · שקילה אחרי בישול = הפחתת 25% מהכמות'],
+        ['ברעב: פטריות, מלפפונים חמוצים, לבבות דקל וסקיני פסטה — חופשי · אפשר גם תוספת חלבון רזה'],
+        ['שתייה זירו רק בארוחה · קפה ותה חופשי בלי סוכר · חלב עד 200 מ״ל ביום'],
+        ['תיבול יבש חופשי · שמן בספריי או שכבה דקה בלבד'],
+        ['רק במסגרת הקלוריות החופשיות: אבוקדו, טחינה, זיתים, שקדים, אגוזים, חמאת בוטנים, קטניות, בטטה ושיבולת שועל'],
+        ['2–3 ליטר מים ביום · מינימום 8,000 צעדים יומיים']
+      ]) ] },
+    { id: uid(), name:'150 קלוריות חופשיות', emoji:'🍬', color:'free', time:'', type:'info',
+      groups: [ g('', [
+        ['150 קלוריות חופשיות בכל יום — ניתן לצבור: 300 קק״ל כל יומיים']
+      ]) ] }
+  ];
 }
 function deepMerge(base, over){
   if (over === null || over === undefined) return base;
@@ -575,7 +765,31 @@ function deepMerge(base, over){
   return out;
 }
 function migrate(s){
-  // future schema migrations go here, keyed off s.version
+  if ((s.version || 1) < 2){
+    // v1 meals had a flat items[] — wrap them in a single unnamed group
+    ['cut','bulk'].forEach(mk => {
+      ((s.menus[mk] || {}).meals || []).forEach(meal => {
+        if (!meal.groups){
+          meal.groups = [{ id: uid(), label:'', carb:false,
+            items: (meal.items || []).map(it => ({ id: it.id || uid(), name: it.name, qty: it.qty || '', rawness:'none' })) }];
+          delete meal.items;
+        }
+        if (!meal.type) meal.type = 'meal';
+      });
+    });
+    // seed the bulk menu only when it is empty — never overwrite user data
+    if (!s.menus.bulk.meals.length) s.menus.bulk.meals = seedBulkMeals();
+    // neck moved to a one-time setting: prefill from the latest measurement that has it
+    if (s.settings.neckCm == null){
+      const withNeck = (s.measurements || []).filter(m => m.neck != null)
+        .sort((a,b) => dateMs(b.date) - dateMs(a.date));
+      if (withNeck.length) s.settings.neckCm = withNeck[0].neck;
+    }
+    // register newly added built-in exercises (template targets) without touching user ones
+    defaultState().exercises.forEach(de => {
+      if (!s.exercises.some(e => e.id === de.id)) s.exercises.push(de);
+    });
+  }
   s.version = DATA_VERSION;
   return s;
 }
@@ -649,11 +863,25 @@ function calcBMI(weight){
   if (!h || !weight) return null;
   return weight / Math.pow(h/100, 2);
 }
-function calcBodyFat(waist, neck){
-  const h = state.settings.heightCm;
+function calcBodyFat(waist){
+  const h = state.settings.heightCm, neck = state.settings.neckCm;
   if (!h || !waist || !neck || waist <= neck) return null;
   const bf = 495 / (1.0324 - 0.19077 * Math.log10(waist - neck) + 0.15456 * Math.log10(h)) - 450;
   return (bf > 0 && bf < 75) ? bf : null;
+}
+/* ---------------- raw/cooked & day-type helpers ---------------- */
+function parseGrams(qty){
+  const m = String(qty || '').match(/(\d+(?:[.,]\d+)?)\s*(?:גרם|ג׳|g\b|grams?)/i);
+  return m ? parseFloat(m[1].replace(',', '.')) : null;
+}
+function cookedGrams(item){
+  const grams = parseGrams(item.qty);
+  if (item.rawness !== 'raw' || grams === null) return null;
+  return Math.round(grams * (item.factor || state.settings.cookedFactor || 0.75));
+}
+function dayTypeFor(dateIso){
+  if (state.dayTypes && state.dayTypes[dateIso]) return state.dayTypes[dateIso];
+  return state.workouts.some(w => w.date === dateIso) ? 'training' : 'rest';
 }
 
 /* ---------------- modal ---------------- */
@@ -917,13 +1145,18 @@ function goalProgress(field){
   return Math.max(0, Math.min(100, ((base - cur) / (base - goal)) * 100));
 }
 function activeMenu(mode){ return state.menus[mode || state.mode.current].meals; }
+/* meals actually eaten on a date: info cards excluded; training-only meals excluded on rest days */
+function checkableMeals(mode, dateIso){
+  const rest = dayTypeFor(dateIso || todayISO()) === 'rest';
+  return activeMenu(mode).filter(m => m.type !== 'info' && !(rest && m.trainingOnly));
+}
 function todayChecks(mode){
   mode = mode || state.mode.current;
   const day = state.checks[todayISO()];
   return (day && day[mode]) ? day[mode] : [];
 }
 function adherenceForDate(iso, mode){
-  const meals = activeMenu(mode);
+  const meals = checkableMeals(mode, iso);
   if (!meals.length) return null;
   const day = state.checks[iso];
   const checked = (day && day[mode]) ? day[mode].filter(id => meals.some(m => m.id === id)).length : 0;
@@ -947,10 +1180,11 @@ function renderHome(){
   const mode = state.mode.current;
   const modeName = t('mode.' + mode);
   const dayN = daysBetween(state.mode.startDate, todayISO()) + 1;
+  const dt = dayTypeFor(todayISO());
   const last = lastMeasurement();
   const wd = weeklyDelta('weight');
   const gp = goalProgress('weight');
-  const meals = activeMenu();
+  const meals = checkableMeals(mode, todayISO());
   const checked = todayChecks();
   const adhToday = meals.length ? Math.round((checked.filter(id => meals.some(m => m.id === id)).length / meals.length) * 100) : null;
   const adhWeek = weeklyAdherence();
@@ -960,14 +1194,17 @@ function renderHome(){
     mealsHTML = `<div class="empty"><span class="big">🍽️</span>${esc(t('home.noMeals',{mode:modeName}))}<br><br>
       <button class="btn sm" data-action="goto-menu">${t('home.goToMenu')}</button></div>`;
   } else {
-    mealsHTML = meals.map(m => mealCard(m, checked.includes(m.id), true)).join('');
+    mealsHTML = meals.map(m => mealCardV2(m, { checkable:true, done: checked.includes(m.id), dayType: dt })).join('');
   }
 
   $('#tab-home').innerHTML = `
     <div class="hero">
       <div class="mode-name">${esc(t('mode.title',{mode:modeName}))}</div>
       <div class="mode-meta">${esc(t('mode.since',{date:fmtDate(state.mode.startDate)}))}</div>
-      <div class="day-chip">🔥 ${esc(t('mode.day',{n:dayN}))}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="day-chip">🔥 ${esc(t('mode.day',{n:dayN}))}</div>
+        <div class="day-chip">${esc(t(dt === 'training' ? 'day.training' : 'day.rest'))}</div>
+      </div>
     </div>
     <div class="seg grad" style="margin-bottom:14px">
       <button class="${mode==='cut'?'on':''}" data-action="switch-mode" data-mode="cut">${t('mode.cut')}</button>
@@ -999,17 +1236,68 @@ function renderHome(){
     </div>`;
 }
 
-function mealCard(meal, done, checkable){
-  const items = meal.items.map(it => `<span>${esc(it.name)}${it.qty ? ' · ' + esc(it.qty) : ''}</span>`).join('');
-  return `<div class="meal ${done ? 'done' : ''}">
-    ${checkable ? `<button class="meal-check" data-action="toggle-meal" data-id="${meal.id}" aria-label="check">✓</button>` : ''}
-    <div class="meal-body">
-      <div><span class="meal-name">${esc(meal.name)}</span>${meal.time ? `<span class="meal-time">🕐 ${esc(meal.time)}</span>` : ''}</div>
-      ${items ? `<div class="meal-items">${items}</div>` : ''}
+/* --- meal card v2: colored header, groups, raw/cooked columns --- */
+const cookedView = new Set(); // meal ids currently showing the cooked column (session-only)
+function itemRowV2(it, showAfter){
+  const raw = it.rawness === 'raw';
+  const grams = parseGrams(it.qty);
+  const noAfter = showAfter ? '' : ' no-after';
+  const before = it.qty
+    ? `<span class="tag ${raw ? 'before' : 'plain'}">${esc(it.qty)}</span>`
+    : '<span></span>';
+  let after = '';
+  if (showAfter){
+    if (raw && grams !== null) after = `<span class="tag after">≈ ${cookedGrams(it)} ${t('common.gram')}</span>`;
+    else if (it.rawness === 'cooked') after = `<span class="tag after">${t('tag.after')}</span>`;
+    else after = `<span class="tag plain">${t('tag.none')}</span>`;
+  }
+  return `<div class="m2-row${noAfter}"><span class="m2-item">${esc(it.name)}</span>${before}${after}</div>`;
+}
+function mealCardV2(meal, opts){
+  opts = opts || {};
+  const isInfo = meal.type === 'info';
+  const rest = opts.dayType === 'rest';
+  const colorCls = 'c-' + (meal.color || (isInfo ? 'info' : 'moon'));
+  const btns =
+    `<button class="mini-btn" data-action="edit-meal" data-id="${meal.id}" aria-label="edit">✎</button>` +
+    `<button class="mini-btn" data-action="del-meal" data-id="${meal.id}" aria-label="delete">🗑</button>`;
+  if (isInfo){
+    const bullets = (meal.groups || []).flatMap(gr => gr.items).map(it =>
+      `<li>${esc(it.name)}${it.qty ? ' · ' + esc(it.qty) : ''}</li>`).join('');
+    return `<div class="meal2 ${meal.color === 'tips' ? 'tips' : ''}">
+      <div class="m2-head ${colorCls}">
+        <span class="m2-emoji">${esc(meal.emoji || '📋')}</span>
+        <span class="m2-name">${esc(meal.name)}</span>${btns}
+      </div>
+      <ul class="m2-bullets">${bullets}</ul>
+    </div>`;
+  }
+  // hide carb groups entirely on rest days
+  const groups = (meal.groups || []).filter(gr => !(rest && gr.carb && opts.filterCarbs !== false));
+  const showAfter = cookedView.has(meal.id);
+  const convertible = groups.some(gr => gr.items.some(it => it.rawness === 'raw' && parseGrams(it.qty) !== null));
+  const body = groups.map((gr, gi) => {
+    const hasQty = gr.items.some(it => it.qty);
+    const cols = hasQty ? `<div class="m2-cols${showAfter ? '' : ' no-after'}">
+        <span>${t('menu.colProduct')}</span><span>${t('menu.colBefore')}</span>${showAfter ? `<span>${t('menu.colAfter')}</span>` : ''}
+      </div>` : '';
+    return `${gr.label ? `<div class="g-label"><i class="g-dot" style="background:var(--s${(gi % 5) + 1})"></i>${esc(gr.label)}</div>` : ''}
+      ${cols}${gr.items.map(it => itemRowV2(it, showAfter)).join('')}`;
+  }).join('');
+  return `<div class="meal2 ${opts.done ? 'done' : ''}">
+    <div class="m2-head ${colorCls}">
+      ${opts.checkable ? `<button class="meal-check" data-action="toggle-meal" data-id="${meal.id}" aria-label="check">✓</button>` : ''}
+      <span class="m2-emoji">${esc(meal.emoji || '🍽️')}</span>
+      <span class="m2-name">${esc(meal.name)}</span>
+      ${meal.trainingOnly ? `<span class="tonly-tag">${t('menu.trainingOnly')}</span>` : ''}
+      ${meal.time ? `<span class="m2-time">🕐 ${esc(meal.time)}</span>` : ''}
+      ${btns}
     </div>
-    <div class="meal-actions">
-      <button class="mini-btn" data-action="edit-meal" data-id="${meal.id}" aria-label="edit">✎</button>
-      <button class="mini-btn" data-action="del-meal" data-id="${meal.id}" aria-label="delete">🗑</button>
+    ${meal.cond ? `<div class="m2-cond">${esc(meal.cond)}</div>` : ''}
+    ${convertible ? `<div class="m2-toggle"><label class="switch"><input type="checkbox" data-action-change="toggle-cooked" data-id="${meal.id}" ${showAfter ? 'checked' : ''}><i></i></label>${t('menu.showCooked')}</div>` : ''}
+    <div class="m2-body">${body}
+      ${meal.warn ? `<div class="warn-line"><span>⚠️</span><span>${esc(meal.warn)}</span></div>` : ''}
+      ${meal.hl ? `<div class="hl-line">★ ${esc(meal.hl)}</div>` : ''}
     </div>
   </div>`;
 }
@@ -1020,12 +1308,27 @@ function mealCard(meal, done, checkable){
 let menuView = null; // which mode's menu is displayed; defaults to active mode
 function renderMenu(){
   if (!menuView) menuView = state.mode.current;
-  const meals = activeMenu(menuView);
   const isActive = menuView === state.mode.current;
+  const dt = dayTypeFor(todayISO());
   const checked = todayChecks(menuView);
+  // browsing the inactive menu shows everything; the active menu follows today's day type
+  const meals = isActive
+    ? activeMenu(menuView).filter(m => !(dt === 'rest' && m.trainingOnly))
+    : activeMenu(menuView);
+
+  const dayToggle = isActive ? `
+    <div class="seg" style="margin-bottom:10px">
+      <button class="${dt==='training'?'on':''}" data-action="day-type" data-type="training">${t('day.training')}</button>
+      <button class="${dt==='rest'?'on':''}" data-action="day-type" data-type="rest">${t('day.rest')}</button>
+    </div>
+    ${dt === 'rest' ? `<div class="rest-tag">🛋️ ${t('day.restTag')}</div>` : ''}` : '';
 
   const mealsHTML = meals.length
-    ? meals.map(m => mealCard(m, isActive && checked.includes(m.id), isActive)).join('')
+    ? meals.map(m => mealCardV2(m, {
+        checkable: isActive && m.type !== 'info',
+        done: isActive && checked.includes(m.id),
+        dayType: isActive ? dt : 'training'
+      })).join('')
     : `<div class="empty"><span class="big">🍽️</span>${esc(t('menu.empty'))}</div>`;
 
   const convRows = state.conversions.map(c => `
@@ -1042,6 +1345,7 @@ function renderMenu(){
       <button class="${menuView==='cut'?'on':''}" data-action="menu-view" data-mode="cut">${t('menu.title',{mode:t('mode.cut')})}</button>
       <button class="${menuView==='bulk'?'on':''}" data-action="menu-view" data-mode="bulk">${t('menu.title',{mode:t('mode.bulk')})}</button>
     </div>
+    ${dayToggle}
     ${mealsHTML}
     <button class="btn full" data-action="add-meal" style="margin:4px 0 20px">+ ${t('menu.addMeal')}</button>
 
@@ -1084,35 +1388,87 @@ function updateCalc(){
   });
 }
 
-/* --- meal editor modal --- */
-function mealItemRow(it){
-  return `<div class="frow meal-item-row" style="margin-bottom:8px">
-    <div class="field" style="margin:0"><input class="mi-name" placeholder="${esc(t('menu.itemName'))}" value="${esc(it ? it.name : '')}"></div>
-    <div class="field" style="margin:0;max-width:38%"><input class="mi-qty" placeholder="${esc(t('menu.qty'))}" value="${esc(it ? it.qty : '')}"></div>
-    <button class="mini-btn" data-action="remove-item-row" style="align-self:center">✕</button>
+/* --- meal editor modal (v2: groups, raw/cooked, flags) --- */
+function itemEditRow(it){
+  const r = it ? it.rawness : 'none';
+  return `<div class="meal-item-row" style="border-bottom:1px solid var(--grid);padding-bottom:8px;margin-bottom:8px">
+    <div class="frow" style="margin-bottom:6px">
+      <div class="field" style="margin:0;flex:1.6"><input class="mi-name" placeholder="${esc(t('menu.itemName'))}" value="${esc(it ? it.name : '')}"></div>
+      <div class="field" style="margin:0"><input class="mi-qty" placeholder="${esc(t('menu.qty'))}" value="${esc(it ? it.qty : '')}"></div>
+    </div>
+    <div class="frow">
+      <div class="field" style="margin:0"><select class="mi-raw">
+        <option value="none" ${r==='none'?'selected':''}>${t('tag.none')}</option>
+        <option value="raw" ${r==='raw'?'selected':''}>${t('tag.before')}</option>
+        <option value="cooked" ${r==='cooked'?'selected':''}>${t('tag.after')}</option>
+      </select></div>
+      <div class="field" style="margin:0;max-width:36%"><input class="mi-factor" type="number" inputmode="decimal" step="0.05" min="0.1" max="5" placeholder="${esc(t('menu.itemFactorPh'))}" value="${it && it.factor ? it.factor : ''}"></div>
+      <button class="mini-btn" data-action="remove-item-row" style="align-self:center">✕</button>
+    </div>
+  </div>`;
+}
+function groupEditBox(gr){
+  const items = gr && gr.items.length ? gr.items : [null];
+  return `<div class="ex-block grp-box" style="margin-bottom:12px">
+    <div class="frow" style="margin-bottom:6px">
+      <div class="field" style="margin:0;flex:1"><input class="gr-label" placeholder="${esc(t('menu.groupLabel'))}" value="${esc(gr ? gr.label : '')}" maxlength="80"></div>
+      <button class="mini-btn" data-action="remove-group" style="align-self:center">🗑</button>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--text-2);margin-bottom:10px">
+      <input type="checkbox" class="gr-carb" ${gr && gr.carb ? 'checked' : ''} style="width:18px;height:18px;accent-color:var(--accent-2)"> ${t('menu.carbGroup')}</label>
+    <div class="gr-items">${items.map(itemEditRow).join('')}</div>
+    <button class="btn ghost sm" data-action="add-item-row">${t('menu.addItem')}</button>
   </div>`;
 }
 function openMealModal(mealId){
   const meal = mealId ? activeMenu(menuView).find(m => m.id === mealId) : null;
-  const items = meal && meal.items.length ? meal.items : [null];
+  const groups = meal && meal.groups && meal.groups.length ? meal.groups : [null];
   openModal(meal ? t('menu.editMeal') : t('menu.addMeal'), `
     <div class="frow">
       <div class="field" style="flex:2"><label>${t('menu.mealName')}</label><input id="mealName" value="${esc(meal ? meal.name : '')}" maxlength="60"></div>
-      <div class="field"><label>${t('menu.mealTime')} ${t('common.optional')}</label><input id="mealTime" type="time" value="${esc(meal && meal.time ? meal.time : '')}"></div>
+      <div class="field" style="max-width:26%"><label>${t('menu.mealEmoji')}</label><input id="mealEmoji" value="${esc(meal && meal.emoji ? meal.emoji : '')}" maxlength="4" placeholder="🍽️"></div>
+      <div class="field" style="max-width:30%"><label>${t('menu.mealTime')}</label><input id="mealTime" type="time" value="${esc(meal && meal.time ? meal.time : '')}"></div>
     </div>
+    <div class="field"><label>${t('menu.mealCond')} ${t('common.optional')}</label><input id="mealCond" value="${esc(meal && meal.cond ? meal.cond : '')}" maxlength="200"></div>
+    <div class="field"><label>${t('menu.mealWarn')} ${t('common.optional')}</label><input id="mealWarn" value="${esc(meal && meal.warn ? meal.warn : '')}" maxlength="200"></div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin-bottom:8px">
+      <input type="checkbox" id="mealTrainingOnly" ${meal && meal.trainingOnly ? 'checked' : ''} style="width:19px;height:19px;accent-color:var(--accent-2)"> ${t('menu.trainingOnlyFull')}</label>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin-bottom:14px">
+      <input type="checkbox" id="mealIsInfo" ${meal && meal.type === 'info' ? 'checked' : ''} style="width:19px;height:19px;accent-color:var(--accent-2)"> ${t('menu.infoCard')}</label>
     <div class="field"><label>${t('menu.items')}</label>
-      <div id="mealItems">${items.map(mealItemRow).join('')}</div>
-      <button class="btn ghost sm" data-action="add-item-row">${t('menu.addItem')}</button>
+      <div id="mealGroups">${groups.map(groupEditBox).join('')}</div>
+      <button class="btn ghost sm" data-action="add-group">${t('menu.addGroup')}</button>
     </div>`, {
     onSave(){
       const name = $('#mealName').value.trim();
       if (!name){ $('#mealName').classList.add('err'); toast(t('val.required')); return false; }
-      const its = [...document.querySelectorAll('.meal-item-row')].map(r => ({
-        id: uid(), name: r.querySelector('.mi-name').value.trim(), qty: r.querySelector('.mi-qty').value.trim()
-      })).filter(it => it.name);
-      const data = { name, time: $('#mealTime').value || '', items: its };
+      const outGroups = [];
+      document.querySelectorAll('.grp-box').forEach(box => {
+        const items = [...box.querySelectorAll('.meal-item-row')].map(row => {
+          const f = parseNum(row.querySelector('.mi-factor').value);
+          return {
+            id: uid(),
+            name: row.querySelector('.mi-name').value.trim(),
+            qty: row.querySelector('.mi-qty').value.trim(),
+            rawness: row.querySelector('.mi-raw').value,
+            factor: (f && f > 0 && f <= 5) ? f : undefined
+          };
+        }).filter(it => it.name);
+        if (items.length || box.querySelector('.gr-label').value.trim())
+          outGroups.push({ id: uid(), label: box.querySelector('.gr-label').value.trim(), carb: box.querySelector('.gr-carb').checked, items });
+      });
+      const data = {
+        name,
+        emoji: $('#mealEmoji').value.trim(),
+        time: $('#mealTime').value || '',
+        cond: $('#mealCond').value.trim(),
+        warn: $('#mealWarn').value.trim(),
+        trainingOnly: $('#mealTrainingOnly').checked,
+        type: $('#mealIsInfo').checked ? 'info' : 'meal',
+        groups: outGroups
+      };
       if (meal) Object.assign(meal, data);
-      else activeMenu(menuView).push(Object.assign({ id: uid() }, data));
+      else activeMenu(menuView).push(Object.assign({ id: uid(), color: data.type === 'info' ? 'info' : 'moon' }, data));
       save(); renderMenu(); renderHome(); toast(t('common.saved'));
       return true;
     }
@@ -1159,19 +1515,20 @@ function openFactorsModal(){
 /* ============================================================
    TAB: Measurements
    ============================================================ */
+/* neck was removed from the weekly form — it lives in Settings as a one-time value;
+   legacy neck data stays in storage but is no longer displayed */
 const MS_FIELDS = [
   { key:'weight', unit:'kg', varName:'--s1', min:30,  max:300 },
   { key:'waist',  unit:'cm', varName:'--s2', min:40,  max:200 },
   { key:'belly',  unit:'cm', varName:'--s3', min:40,  max:200 },
-  { key:'arm',    unit:'cm', varName:'--s4', min:15,  max:80  },
-  { key:'neck',   unit:'cm', varName:'--s5', min:20,  max:80  }
+  { key:'arm',    unit:'cm', varName:'--s4', min:15,  max:80  }
 ];
 let msChip = 'weight';
 
 function msSeries(key){
   const ms = sortedMeasurements();
   if (key === 'bmi')     return ms.map(m => ({ d:m.date, y:calcBMI(m.weight) })).filter(p => p.y != null);
-  if (key === 'bodyfat') return ms.map(m => ({ d:m.date, y:calcBodyFat(m.waist, m.neck) })).filter(p => p.y != null);
+  if (key === 'bodyfat') return ms.map(m => ({ d:m.date, y:calcBodyFat(m.waist) })).filter(p => p.y != null);
   return ms.filter(m => m[key] != null).map(m => ({ d:m.date, y:m[key] }));
 }
 function renderMeasure(){
@@ -1182,7 +1539,9 @@ function renderMeasure(){
     `<button class="chip ${msChip===k?'on':''}" data-action="ms-chip" data-key="${k}">${chipLbl(k)}</button>`).join('');
 
   let chartCard;
-  const needH = (msChip==='bmi'||msChip==='bodyfat') && !state.settings.heightCm;
+  const needH = (msChip==='bmi' && !state.settings.heightCm) ||
+                (msChip==='bodyfat' && (!state.settings.heightCm || !state.settings.neckCm));
+  const needHKey = msChip==='bodyfat' ? 'ms.needNeck' : 'ms.needHeight';
   if (msChip === 'combined'){
     const legend = MS_FIELDS.map(f =>
       `<span><i style="background:var(${f.varName})"></i>${t('ms.'+f.key)}</span>`).join('');
@@ -1200,16 +1559,17 @@ function renderMeasure(){
         ${field && wd ? `<span style="font-size:12px">${t('ms.weeklyDelta')}: ${deltaBadge(field.key, wd.delta)}</span>` : ''}
       </h3>
       <div class="chart-wrap"><canvas id="msChart"></canvas></div>
-      ${needH ? `<p class="hint" style="padding:2px 6px 6px">${t('ms.needHeight')}</p>` : ''}
+      ${needH ? `<p class="hint" style="padding:2px 6px 6px">${t(needHKey)}</p>` : ''}
     </div>`;
   }
 
+  const noNeck = !state.settings.neckCm;
   const rows = [...ms].reverse().map(m => {
-    const bmi = calcBMI(m.weight), bf = calcBodyFat(m.waist, m.neck);
+    const bmi = calcBMI(m.weight), bf = calcBodyFat(m.waist);
     return `<tr>
       <td style="font-weight:600">${fmtDate(m.date)}</td>
       <td>${fmtNum(m.weight)}</td><td>${fmtNum(m.waist)}</td><td>${fmtNum(m.belly)}</td>
-      <td>${fmtNum(m.arm)}</td><td>${fmtNum(m.neck)}</td>
+      <td>${fmtNum(m.arm)}</td>
       <td>${fmtNum(bmi)}</td><td>${bf != null ? fmtNum(bf) + '%' : '—'}</td>
       <td><button class="mini-btn" data-action="ms-edit" data-id="${m.id}">✎</button><button class="mini-btn" data-action="ms-del" data-id="${m.id}">🗑</button></td>
     </tr>`;
@@ -1221,8 +1581,9 @@ function renderMeasure(){
     ${chartCard}
     <div class="card">
       <h2>${t('ms.history')}</h2>
+      ${ms.length && noNeck ? `<p class="hint" style="margin:-6px 0 8px">${t('ms.needNeck')}</p>` : ''}
       ${ms.length ? `<div class="tbl-wrap"><table>
-        <thead><tr><th>${t('common.date')}</th><th>${t('ms.weight')}</th><th>${t('ms.waist')}</th><th>${t('ms.belly')}</th><th>${t('ms.arm')}</th><th>${t('ms.neck')}</th><th>${t('ms.bmi')}</th><th>${t('ms.bodyfat')}</th><th></th></tr></thead>
+        <thead><tr><th>${t('common.date')}</th><th>${t('ms.weight')}</th><th>${t('ms.waist')}</th><th>${t('ms.belly')}</th><th>${t('ms.arm')}</th><th>${t('ms.bmi')}</th><th>${t('ms.bodyfat')}</th><th></th></tr></thead>
         <tbody>${rows}</tbody></table></div>`
       : `<div class="empty"><span class="big">📏</span>${t('ms.noData')}</div>`}
     </div>`;
@@ -1325,7 +1686,11 @@ function renderWorkout(){
   }).join('');
 
   $('#tab-workout').innerHTML = `
-    <button class="btn full" data-action="wk-add" style="margin-bottom:14px">+ ${t('wk.add')}</button>
+    <div class="frow" style="margin-bottom:10px">
+      <button class="btn" data-action="wk-start" style="flex:2">🏋️ ${t('wk.start')}</button>
+      <button class="btn ghost" data-action="wk-template" style="flex:1">${t('wk.template')}</button>
+    </div>
+    <button class="btn ghost sm full" data-action="wk-add" style="margin-bottom:14px">+ ${t('wk.add')}</button>
     <div class="card">
       <h2>🏆 ${t('wk.prs')}
         <span class="h-actions"><button class="btn ghost sm" data-action="wk-manage">${t('wk.manage')}</button></span></h2>
@@ -1334,20 +1699,35 @@ function renderWorkout(){
     ${wkCards || `<div class="empty"><span class="big">🏋️</span>${t('wk.noData')}</div>`}`;
 }
 
-/* --- workout editor --- */
-function wkSetRow(s, i){
+/* --- workout editor (supports total-weight or plates+bar entry per exercise) --- */
+function exPref(exId){ return (state.exPrefs && state.exPrefs[exId]) || { entry:'total', barWeight:20 }; }
+function wkSetRow(s, i, mode, bar){
+  const inputStyle = 'border:1px solid var(--border);background:var(--surface-2);border-radius:10px;padding:8px 10px;min-height:42px;font-size:15px';
+  const reps = `<input class="ws-reps" type="number" inputmode="numeric" min="1" max="200" placeholder="${esc(t('wk.reps'))}" value="${s && s.reps != null ? s.reps : ''}" style="${inputStyle}">`;
+  if (mode === 'plates'){
+    const side = s && s.weight != null ? Math.max(0, (s.weight - (bar || 0)) / 2) : '';
+    const total = s && s.weight != null ? '= ' + fmtNum(s.weight) : '';
+    return `<div class="wk-set">
+      <span class="set-n">${i+1}</span>${reps}
+      <input class="ws-side" type="number" inputmode="decimal" step="0.5" min="0" max="300" placeholder="${esc(t('wk.perSide'))}" value="${side}" style="${inputStyle}">
+      <span class="plate-total">${total}</span>
+      <button class="mini-btn" data-action="wk-remove-set">✕</button>
+    </div>`;
+  }
   return `<div class="wk-set">
-    <span class="set-n">${i+1}</span>
-    <input class="ws-reps" type="number" inputmode="numeric" min="1" max="200" placeholder="${esc(t('wk.reps'))}" value="${s && s.reps != null ? s.reps : ''}" style="border:1px solid var(--border);background:var(--surface-2);border-radius:10px;padding:8px 10px;min-height:42px;font-size:15px">
-    <input class="ws-weight" type="number" inputmode="decimal" step="0.5" min="0" max="600" placeholder="${esc(t('wk.weight'))} (${t('common.kg')})" value="${s && s.weight != null ? s.weight : ''}" style="border:1px solid var(--border);background:var(--surface-2);border-radius:10px;padding:8px 10px;min-height:42px;font-size:15px">
+    <span class="set-n">${i+1}</span>${reps}
+    <input class="ws-weight" type="number" inputmode="decimal" step="0.5" min="0" max="600" placeholder="${esc(t('wk.weight'))} (${t('common.kg')})" value="${s && s.weight != null ? s.weight : ''}" style="${inputStyle}">
     <button class="mini-btn" data-action="wk-remove-set">✕</button>
   </div>`;
 }
 function wkExBlock(entry){
+  const exId = entry ? entry.exerciseId : (visibleExercises()[0] || {}).id;
+  const pref = exPref(exId);
+  const mode = pref.entry, bar = pref.barWeight;
   const opts = visibleExercises().map(e =>
     `<option value="${e.id}" ${entry && entry.exerciseId === e.id ? 'selected' : ''}>${esc(exName(e))}</option>`).join('');
-  const sets = (entry && entry.sets.length ? entry.sets : [null]).map(wkSetRow).join('');
-  return `<div class="ex-block wk-ex-block">
+  const sets = (entry && entry.sets.length ? entry.sets : [null]).map((s,i) => wkSetRow(s, i, mode, bar)).join('');
+  return `<div class="ex-block wk-ex-block" data-mode="${mode}">
     <div class="ex-head">
       <select class="wk-ex-select" style="flex:1;border:1px solid var(--border);background:var(--surface-2);border-radius:10px;padding:8px 10px;min-height:42px;font-size:15px;appearance:none">
         ${opts}<option value="__new">＋ ${esc(t('wk.newExercise'))}</option>
@@ -1355,6 +1735,11 @@ function wkExBlock(entry){
       <input class="wk-new-name" placeholder="${esc(t('wk.exerciseName'))}" style="display:none;flex:1;border:1px solid var(--accent-2);background:var(--surface-2);border-radius:10px;padding:8px 10px;min-height:42px;font-size:15px">
       <button class="mini-btn" data-action="wk-remove-ex">🗑</button>
     </div>
+    <div class="seg mini">
+      <button class="${mode==='total'?'on':''}" data-action="wk-entry-mode" data-mode="total">${t('wk.entryTotal')}</button>
+      <button class="${mode==='plates'?'on':''}" data-action="wk-entry-mode" data-mode="plates">${t('wk.entryPlates')}</button>
+    </div>
+    <div class="bar-row" style="${mode==='plates'?'':'display:none'}">${t('wk.bar')} <input class="wk-bar" type="number" inputmode="decimal" step="0.5" min="0" max="100" value="${bar}"></div>
     <div class="wk-sets">${sets}</div>
     <button class="btn ghost sm" data-action="wk-add-set">${t('wk.addSet')}</button>
   </div>`;
@@ -1362,11 +1747,44 @@ function wkExBlock(entry){
 function renumberSets(block){
   block.querySelectorAll('.wk-sets .set-n').forEach((el,i) => el.textContent = i+1);
 }
-function openWorkoutModal(id){
+function blockBar(block){ return parseNum(block.querySelector('.wk-bar').value) ?? 20; }
+function updateBlockTotals(block){
+  if (block.dataset.mode !== 'plates') return;
+  const bar = blockBar(block);
+  block.querySelectorAll('.wk-set').forEach(row => {
+    const side = parseNum((row.querySelector('.ws-side') || {}).value);
+    const out = row.querySelector('.plate-total');
+    if (out) out.textContent = side !== null ? '= ' + fmtNum(2 * side + bar) : '';
+  });
+}
+function rowWeight(row, mode, bar){
+  if (mode === 'plates'){
+    const side = parseNum((row.querySelector('.ws-side') || {}).value);
+    return side === null ? null : 2 * side + bar;
+  }
+  return parseNum((row.querySelector('.ws-weight') || {}).value);
+}
+function convertBlockMode(block, newMode){
+  const bar = blockBar(block);
+  const oldMode = block.dataset.mode;
+  const sets = [...block.querySelectorAll('.wk-set')].map(row => {
+    const reps = parseNum(row.querySelector('.ws-reps').value);
+    const weight = rowWeight(row, oldMode, bar);
+    return (reps === null && weight === null) ? null : { reps, weight };
+  });
+  block.dataset.mode = newMode;
+  block.querySelectorAll('.seg.mini button').forEach(b => b.classList.toggle('on', b.dataset.mode === newMode));
+  block.querySelector('.bar-row').style.display = newMode === 'plates' ? '' : 'none';
+  block.querySelector('.wk-sets').innerHTML =
+    (sets.length ? sets : [null]).map((s,i) => wkSetRow(s, i, newMode, bar)).join('');
+}
+function openWorkoutModal(id, prefill){
   const w = id ? state.workouts.find(x => x.id === id) : null;
-  const blocks = (w && w.entries.length ? w.entries : [null]).map(wkExBlock).join('');
+  const src = w || prefill;
+  const blocks = (src && src.entries.length ? src.entries : [null]).map(wkExBlock).join('');
   openModal(w ? t('wk.edit') : t('wk.add'), `
-    <div class="field"><label>${t('common.date')}</label><input id="wkDate" type="date" value="${w ? w.date : todayISO()}" max="${todayISO()}"></div>
+    ${prefill ? `<p class="hint" style="margin-bottom:10px">💡 ${t('wk.fromTemplate')}</p>` : ''}
+    <div class="field"><label>${t('common.date')}</label><input id="wkDate" type="date" value="${src ? src.date : todayISO()}" max="${todayISO()}"></div>
     <label style="display:block;font-size:12.5px;font-weight:700;color:var(--text-2);margin-bottom:6px">${t('wk.exercises')}</label>
     <div id="wkBlocks">${blocks}</div>
     <button class="btn ghost sm full" data-action="wk-add-ex-block">${t('wk.addExercise')}</button>`, {
@@ -1385,15 +1803,20 @@ function openWorkoutModal(id){
           if (found){ exId = found.id; found.hidden = false; }
           else { const ne = { id: uid(), name, hidden:false }; state.exercises.push(ne); exId = ne.id; }
         }
+        const mode = block.dataset.mode, bar = blockBar(block);
         const sets = [];
         block.querySelectorAll('.wk-set').forEach(row => {
           const reps = parseNum(row.querySelector('.ws-reps').value);
-          const weight = parseNum(row.querySelector('.ws-weight').value);
+          let weight = rowWeight(row, mode, bar);
           if (reps === null && weight === null) return;
-          if (reps === null || reps <= 0 || reps > 200 || weight === null || weight < 0 || weight > 600){ bad = true; return; }
+          if (weight === null) weight = 0; // bodyweight set
+          if (reps === null || reps <= 0 || reps > 200 || weight < 0 || weight > 600){ bad = true; return; }
           sets.push({ reps: Math.round(reps), weight });
         });
-        if (sets.length) entries.push({ exerciseId: exId, sets });
+        if (sets.length){
+          entries.push({ exerciseId: exId, sets });
+          state.exPrefs[exId] = { entry: mode, barWeight: bar }; // remember per-exercise entry preference
+        }
       });
       if (bad){ toast(t('val.number')); return false; }
       if (!entries.length){ toast(t('wk.noSets')); return false; }
@@ -1401,6 +1824,8 @@ function openWorkoutModal(id){
       const before = prMapExcluding(w ? w.id : null);
       if (w){ w.date = date; w.entries = entries; }
       else state.workouts.push({ id: uid(), date, entries });
+      // a logged workout flips that date to a training day (manual toggle can still override later)
+      if (state.dayTypes[date] === 'rest') delete state.dayTypes[date];
       save();
 
       // PR detection: compare this workout's best lifts to all earlier data
@@ -1431,6 +1856,70 @@ function prMapExcluding(workoutId){
     }));
   });
   return map;
+}
+/* --- fixed workout template --- */
+function lastEntryFor(exId){
+  const ws = [...state.workouts].sort((a,b) => dateMs(b.date) - dateMs(a.date));
+  for (const w of ws){
+    const en = w.entries.find(e => e.exerciseId === exId);
+    if (en) return en;
+  }
+  return null;
+}
+/* build today's workout from the template; every set defaults to the matching set
+   of the previous workout (per-set memory → reverse pyramid friendly) */
+function startFromTemplate(){
+  const entries = (state.template || []).map(tp => {
+    if (!getExercise(tp.exerciseId)) return null;
+    const prev = lastEntryFor(tp.exerciseId);
+    const sets = Array.from({ length: tp.sets }, (_, i) => {
+      if (prev && prev.sets[i]) return { reps: prev.sets[i].reps, weight: prev.sets[i].weight };
+      if (prev && prev.sets.length){
+        const lastSet = prev.sets[prev.sets.length - 1];
+        return { reps: tp.reps ?? lastSet.reps, weight: lastSet.weight };
+      }
+      return { reps: tp.reps, weight: null };
+    });
+    return { exerciseId: tp.exerciseId, sets };
+  }).filter(Boolean);
+  if (!entries.length){ openTemplateModal(); return; }
+  openWorkoutModal(null, { date: todayISO(), entries });
+}
+function tplRow(tp){
+  const opts = visibleExercises().map(e =>
+    `<option value="${e.id}" ${tp && tp.exerciseId === e.id ? 'selected' : ''}>${esc(exName(e))}</option>`).join('');
+  return `<div class="tpl-row" style="display:flex;gap:6px;align-items:center;margin-bottom:8px">
+    <button class="mini-btn" data-action="tpl-up">↑</button>
+    <select class="tpl-ex" style="flex:1;min-width:0;border:1px solid var(--border);background:var(--surface-2);border-radius:10px;padding:8px 6px;min-height:42px;font-size:13px;appearance:none">${opts}</select>
+    <input class="tpl-sets" type="number" inputmode="numeric" min="1" max="12" value="${tp ? tp.sets : 3}" title="${esc(t('wk.sets'))}" style="width:56px;border:1px solid var(--border);background:var(--surface-2);border-radius:10px;padding:8px 6px;min-height:42px;font-size:14px;text-align:center">
+    <input class="tpl-reps" type="number" inputmode="numeric" min="1" max="100" value="${tp && tp.reps ? tp.reps : ''}" placeholder="${esc(t('wk.toFailure'))}" style="width:72px;border:1px solid var(--border);background:var(--surface-2);border-radius:10px;padding:8px 6px;min-height:42px;font-size:13px;text-align:center">
+    <button class="mini-btn" data-action="tpl-del">✕</button>
+  </div>`;
+}
+function openTemplateModal(){
+  const rows = (state.template || []).map(tplRow).join('');
+  openModal(t('wk.editTemplate'), `
+    <div style="display:flex;gap:6px;margin-bottom:6px;font-size:11px;font-weight:700;color:var(--muted)">
+      <span style="width:34px"></span><span style="flex:1">${t('wk.exercise')}</span>
+      <span style="width:56px;text-align:center">${t('wk.sets')}</span>
+      <span style="width:72px;text-align:center">${t('wk.reps')}</span><span style="width:34px"></span>
+    </div>
+    <div id="tplRows">${rows}</div>
+    <button class="btn ghost sm" data-action="tpl-add">+ ${t('wk.exercise')}</button>`, {
+    onSave(){
+      const out = [];
+      document.querySelectorAll('.tpl-row').forEach(r => {
+        const exId = r.querySelector('.tpl-ex').value;
+        const sets = parseNum(r.querySelector('.tpl-sets').value);
+        const reps = parseNum(r.querySelector('.tpl-reps').value);
+        if (!exId || sets === null || sets < 1 || sets > 12) return;
+        out.push({ exerciseId: exId, sets: Math.round(sets), reps: reps ? Math.round(reps) : null });
+      });
+      state.template = out;
+      save(); renderWorkout(); toast(t('common.saved'));
+      return true;
+    }
+  });
 }
 /* --- exercise history modal --- */
 function openExerciseModal(exId){
@@ -1572,6 +2061,14 @@ function renderSettings(){
         <span class="lbl">${t('st.height')} (${t('common.cm')})<span class="sub">${t('st.heightSub')}</span></span>
         <input id="heightInput" type="number" inputmode="decimal" min="100" max="250" value="${s.heightCm ?? ''}" style="width:96px;border:1px solid var(--border);background:var(--surface-2);border-radius:12px;padding:9px 10px;min-height:44px;font-size:16px;text-align:center">
       </div>
+      <div class="set-row">
+        <span class="lbl">${t('st.neck')} (${t('common.cm')})<span class="sub">${t('st.neckSub')}</span></span>
+        <input id="neckInput" type="number" inputmode="decimal" min="20" max="80" step="0.5" value="${s.neckCm ?? ''}" style="width:96px;border:1px solid var(--border);background:var(--surface-2);border-radius:12px;padding:9px 10px;min-height:44px;font-size:16px;text-align:center">
+      </div>
+      <div class="set-row">
+        <span class="lbl">${t('st.cookFactor')}<span class="sub">${t('st.cookFactorSub')}</span></span>
+        <input id="cookFactorInput" type="number" inputmode="decimal" min="0.3" max="1" step="0.01" value="${s.cookedFactor ?? 0.75}" style="width:96px;border:1px solid var(--border);background:var(--surface-2);border-radius:12px;padding:9px 10px;min-height:44px;font-size:16px;text-align:center">
+      </div>
     </div>
     <div class="card">
       <h2>${t('st.goals')}</h2>
@@ -1588,12 +2085,15 @@ function renderSettings(){
     <p class="hint" style="text-align:center;margin-bottom:8px">${t('st.about')}</p>`;
 
   $('#themeSwitch').addEventListener('change', e => setTheme(e.target.checked ? 'dark' : 'light'));
-  $('#heightInput').addEventListener('change', e => {
+  const numSetting = (id, key, min, max) => $(id).addEventListener('change', e => {
     const v = parseNum(e.target.value);
-    if (v !== null && (v < 100 || v > 250)){ e.target.classList.add('err'); toast(t('val.range',{min:100,max:250})); return; }
+    if (v !== null && (v < min || v > max)){ e.target.classList.add('err'); toast(t('val.range',{min,max})); return; }
     e.target.classList.remove('err');
-    state.settings.heightCm = v; save(); toast(t('common.saved'));
+    state.settings[key] = v; save(); toast(t('common.saved'));
   });
+  numSetting('#heightInput', 'heightCm', 100, 250);
+  numSetting('#neckInput', 'neckCm', 20, 80);
+  numSetting('#cookFactorInput', 'cookedFactor', 0.3, 1);
   document.querySelectorAll('.goal-input').forEach(inp => inp.addEventListener('change', e => {
     const v = parseNum(e.target.value);
     const min = +e.target.dataset.min, max = +e.target.dataset.max;
@@ -1735,8 +2235,15 @@ document.addEventListener('click', e => {
       updateCalc();
       break;
     case 'edit-factors': openFactorsModal(); break;
-    case 'add-item-row': $('#mealItems').insertAdjacentHTML('beforeend', mealItemRow(null)); break;
+    case 'day-type': {
+      state.dayTypes[todayISO()] = el.dataset.type;
+      save(); renderMenu(); renderHome();
+      break;
+    }
+    case 'add-item-row': el.closest('.grp-box').querySelector('.gr-items').insertAdjacentHTML('beforeend', itemEditRow(null)); break;
     case 'remove-item-row': el.closest('.meal-item-row').remove(); break;
+    case 'add-group': $('#mealGroups').insertAdjacentHTML('beforeend', groupEditBox(null)); break;
+    case 'remove-group': el.closest('.grp-box').remove(); break;
     case 'add-conv-row': $('#convRows').insertAdjacentHTML('beforeend', `
       <div class="frow conv-row" data-id="" style="margin-bottom:8px">
         <div class="field" style="margin:0;flex:2"><input class="cv-name" maxlength="40"></div>
@@ -1753,6 +2260,20 @@ document.addEventListener('click', e => {
       break;
     case 'ms-chip': msChip = el.dataset.key; renderMeasure(); break;
     case 'wk-add': openWorkoutModal(null); break;
+    case 'wk-start': startFromTemplate(); break;
+    case 'wk-template': openTemplateModal(); break;
+    case 'tpl-add': $('#tplRows').insertAdjacentHTML('beforeend', tplRow(null)); break;
+    case 'tpl-del': el.closest('.tpl-row').remove(); break;
+    case 'tpl-up': {
+      const row = el.closest('.tpl-row');
+      if (row.previousElementSibling) row.parentElement.insertBefore(row, row.previousElementSibling);
+      break;
+    }
+    case 'wk-entry-mode': {
+      const block = el.closest('.wk-ex-block');
+      if (block.dataset.mode !== el.dataset.mode) convertBlockMode(block, el.dataset.mode);
+      break;
+    }
     case 'wk-edit': openWorkoutModal(el.dataset.id); break;
     case 'wk-del':
       if (!confirm(t('common.deleteConfirm'))) break;
@@ -1766,7 +2287,7 @@ document.addEventListener('click', e => {
     case 'wk-add-set': {
       const block = el.closest('.wk-ex-block');
       const n = block.querySelectorAll('.wk-set').length;
-      block.querySelector('.wk-sets').insertAdjacentHTML('beforeend', wkSetRow(null, n));
+      block.querySelector('.wk-sets').insertAdjacentHTML('beforeend', wkSetRow(null, n, block.dataset.mode, blockBar(block)));
       break;
     }
     case 'wk-remove-set': {
@@ -1801,6 +2322,19 @@ document.addEventListener('change', e => {
   if (e.target.classList && e.target.classList.contains('wk-ex-select')){
     const inp = e.target.parentElement.querySelector('.wk-new-name');
     if (e.target.value === '__new'){ e.target.style.display = 'none'; inp.style.display = 'block'; inp.focus(); }
+  }
+  // per-meal "show cooked weight" switch
+  if (e.target.dataset && e.target.dataset.actionChange === 'toggle-cooked'){
+    const id = e.target.dataset.id;
+    if (cookedView.has(id)) cookedView.delete(id); else cookedView.add(id);
+    if (currentTab === 'home') renderHome(); else renderMenu();
+  }
+});
+// live total in plates+bar entry mode
+document.addEventListener('input', e => {
+  if (e.target.classList && (e.target.classList.contains('ws-side') || e.target.classList.contains('wk-bar'))){
+    const block = e.target.closest('.wk-ex-block');
+    if (block) updateBlockTotals(block);
   }
 });
 $('#modalBack').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
