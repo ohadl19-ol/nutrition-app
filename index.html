@@ -388,6 +388,21 @@ tr:last-child td{border-bottom:none}
 .m2-bullets{padding:6px 14px 12px;list-style:none}
 .m2-bullets li{position:relative;padding-inline-start:16px;margin:7px 0;font-size:13px;color:var(--text-2);line-height:1.55}
 .m2-bullets li::before{content:'•';position:absolute;inset-inline-start:2px;color:var(--accent-2);font-weight:800}
+/* ---------- workout calendar ---------- */
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal-title{font-weight:800;font-size:14.5px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal-dow{font-size:10.5px;color:var(--muted);font-weight:700;padding:2px 0}
+.cal-day{
+  position:relative;aspect-ratio:1;display:grid;place-items:center;min-height:0;
+  font-size:13px;font-weight:600;border-radius:50%;color:var(--text-2);
+  font-variant-numeric:tabular-nums;
+}
+.cal-day.empty{visibility:hidden}
+.cal-day.trained{background:var(--good);color:#fff;font-weight:800;cursor:pointer}
+.cal-day.today{box-shadow:inset 0 0 0 2px var(--accent-2)}
+.cal-day.future{opacity:.35}
+.cal-sum{display:flex;gap:8px;margin-top:12px;justify-content:center;flex-wrap:wrap}
 /* ---------- workout plates & template ---------- */
 .plate-total{font-size:12px;font-weight:800;color:var(--accent-2);white-space:nowrap;min-width:58px;text-align:center;font-variant-numeric:tabular-nums}
 .bar-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:8px}
@@ -532,6 +547,8 @@ const I18N = {
     'ex.tbiceps':'יד קדמית — כפיפת מרפקים בעמידה',
     'ex.ttriceps':'יד אחורית — פשיטת מרפקים בפולי / מאחורי הראש',
     'ex.tabs':'בטן — כפיפות בטן על בוסו',
+    'wk.calendar':'יומן אימונים','wk.weekCount':'השבוע: {n}','wk.monthCount':'החודש: {n}',
+    'cal.days':'א,ב,ג,ד,ה,ו,ש',
   },
   en: {
     'app.title':'Nutrition & Shred','app.sub':'Nutrition · Measurements · Workouts',
@@ -615,6 +632,8 @@ const I18N = {
     'ex.tbiceps':'Biceps — standing curls',
     'ex.ttriceps':'Triceps — cable / overhead extensions',
     'ex.tabs':'Abs — crunches on bosu ball',
+    'wk.calendar':'Workout calendar','wk.weekCount':'This week: {n}','wk.monthCount':'This month: {n}',
+    'cal.days':'S,M,T,W,T,F,S',
   }
 };
 function t(key, vars){
@@ -1259,6 +1278,8 @@ function mealCardV2(meal, opts){
   const rest = opts.dayType === 'rest';
   const colorCls = 'c-' + (meal.color || (isInfo ? 'info' : 'moon'));
   const btns =
+    (opts.reorder ? `<button class="mini-btn" data-action="meal-up" data-id="${meal.id}" aria-label="up">↑</button>` +
+      `<button class="mini-btn" data-action="meal-down" data-id="${meal.id}" aria-label="down">↓</button>` : '') +
     `<button class="mini-btn" data-action="edit-meal" data-id="${meal.id}" aria-label="edit">✎</button>` +
     `<button class="mini-btn" data-action="del-meal" data-id="${meal.id}" aria-label="delete">🗑</button>`;
   if (isInfo){
@@ -1327,7 +1348,8 @@ function renderMenu(){
     ? meals.map(m => mealCardV2(m, {
         checkable: isActive && m.type !== 'info',
         done: isActive && checked.includes(m.id),
-        dayType: isActive ? dt : 'training'
+        dayType: isActive ? dt : 'training',
+        reorder: true
       })).join('')
     : `<div class="empty"><span class="big">🍽️</span>${esc(t('menu.empty'))}</div>`;
 
@@ -1651,6 +1673,51 @@ function prMap(){
   })));
   return map;
 }
+/* --- workout calendar --- */
+let calMonth = null; // {y,m} of the displayed month
+function isoOf(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function renderCalendarCard(){
+  if (!calMonth){ const d = new Date(); calMonth = { y: d.getFullYear(), m: d.getMonth() }; }
+  const { y, m } = calMonth;
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const startDow = new Date(y, m, 1).getDay(); // 0 = Sunday
+  const today = todayISO();
+  const trained = new Set(state.workouts.map(w => w.date));
+  const iso = d => y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+
+  let cells = t('cal.days').split(',').map(d => `<span class="cal-dow">${esc(d)}</span>`).join('');
+  for (let i = 0; i < startDow; i++) cells += '<span class="cal-day empty"></span>';
+  for (let d = 1; d <= daysInMonth; d++){
+    const di = iso(d);
+    const cls = ['cal-day'];
+    if (trained.has(di)) cls.push('trained');
+    if (di === today) cls.push('today');
+    if (dateMs(di) > dateMs(today)) cls.push('future');
+    cells += `<span class="${cls.join(' ')}" ${dateMs(di) <= dateMs(today) ? `data-action="wk-cal-day" data-date="${di}" style="cursor:pointer"` : ''}>${d}</span>`;
+  }
+
+  const monthPrefix = y+'-'+String(m+1).padStart(2,'0');
+  const monthCount = state.workouts.filter(w => w.date.startsWith(monthPrefix)).length;
+  const now = new Date();
+  const ws = new Date(now); ws.setDate(now.getDate() - now.getDay()); // Sunday of the current week
+  const we = new Date(ws); we.setDate(ws.getDate() + 6);
+  const weekCount = state.workouts.filter(w => dateMs(w.date) >= dateMs(isoOf(ws)) && dateMs(w.date) <= dateMs(isoOf(we))).length;
+
+  const monthTitle = new Date(y, m, 1).toLocaleDateString(state.settings.lang === 'he' ? 'he-IL' : 'en-US', { month:'long', year:'numeric' });
+  const prevG = isRTL() ? '›' : '‹', nextG = isRTL() ? '‹' : '›';
+  return `<div class="card">
+    <div class="cal-head">
+      <button class="mini-btn" data-action="wk-cal-shift" data-d="-1" style="font-size:20px">${prevG}</button>
+      <span class="cal-title">📅 ${esc(monthTitle)}</span>
+      <button class="mini-btn" data-action="wk-cal-shift" data-d="1" style="font-size:20px">${nextG}</button>
+    </div>
+    <div class="cal-grid">${cells}</div>
+    <div class="cal-sum">
+      <span class="delta ${weekCount > 0 ? 'good' : 'flat'}">${t('wk.weekCount',{n:weekCount})}</span>
+      <span class="delta ${monthCount > 0 ? 'good' : 'flat'}">${t('wk.monthCount',{n:monthCount})}</span>
+    </div>
+  </div>`;
+}
 function renderWorkout(){
   const prs = prMap();
   const prRows = Object.entries(prs)
@@ -1691,6 +1758,7 @@ function renderWorkout(){
       <button class="btn ghost" data-action="wk-template" style="flex:1">${t('wk.template')}</button>
     </div>
     <button class="btn ghost sm full" data-action="wk-add" style="margin-bottom:14px">+ ${t('wk.add')}</button>
+    ${renderCalendarCard()}
     <div class="card">
       <h2>🏆 ${t('wk.prs')}
         <span class="h-actions"><button class="btn ghost sm" data-action="wk-manage">${t('wk.manage')}</button></span></h2>
@@ -1783,7 +1851,7 @@ function openWorkoutModal(id, prefill){
   const src = w || prefill;
   const blocks = (src && src.entries.length ? src.entries : [null]).map(wkExBlock).join('');
   openModal(w ? t('wk.edit') : t('wk.add'), `
-    ${prefill ? `<p class="hint" style="margin-bottom:10px">💡 ${t('wk.fromTemplate')}</p>` : ''}
+    ${prefill && prefill.entries.length ? `<p class="hint" style="margin-bottom:10px">💡 ${t('wk.fromTemplate')}</p>` : ''}
     <div class="field"><label>${t('common.date')}</label><input id="wkDate" type="date" value="${src ? src.date : todayISO()}" max="${todayISO()}"></div>
     <label style="display:block;font-size:12.5px;font-weight:700;color:var(--text-2);margin-bottom:6px">${t('wk.exercises')}</label>
     <div id="wkBlocks">${blocks}</div>
@@ -2260,6 +2328,29 @@ document.addEventListener('click', e => {
       break;
     case 'ms-chip': msChip = el.dataset.key; renderMeasure(); break;
     case 'wk-add': openWorkoutModal(null); break;
+    case 'wk-cal-shift': {
+      const d = new Date(calMonth.y, calMonth.m + (+el.dataset.d), 1);
+      calMonth = { y: d.getFullYear(), m: d.getMonth() };
+      renderWorkout();
+      break;
+    }
+    case 'wk-cal-day': {
+      const date = el.dataset.date;
+      const w = state.workouts.find(x => x.date === date);
+      if (w) openWorkoutModal(w.id);
+      else openWorkoutModal(null, { date, entries: [] });
+      break;
+    }
+    case 'meal-up': case 'meal-down': {
+      const arr = state.menus[menuView || state.mode.current].meals;
+      const i = arr.findIndex(x => x.id === el.dataset.id);
+      const j = a === 'meal-up' ? i - 1 : i + 1;
+      if (i >= 0 && j >= 0 && j < arr.length){
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+        save(); renderMenu();
+      }
+      break;
+    }
     case 'wk-start': startFromTemplate(); break;
     case 'wk-template': openTemplateModal(); break;
     case 'tpl-add': $('#tplRows').insertAdjacentHTML('beforeend', tplRow(null)); break;
