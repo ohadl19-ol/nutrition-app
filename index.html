@@ -245,7 +245,7 @@ tr:last-child td{border-bottom:none}
 .pr-date{font-size:11.5px;color:var(--muted)}
 .pr-val{font-weight:800;font-size:16px;font-variant-numeric:tabular-nums}
 /* ---------- workout cards ---------- */
-.wk-set{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.wk-set{display:flex;gap:6px;align-items:center;margin-bottom:8px}
 .wk-set .set-n{width:26px;height:26px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--muted);flex:none}
 .wk-set input{flex:1;min-width:0}
 .ex-block{border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:10px;background:var(--surface)}
@@ -404,11 +404,17 @@ tr:last-child td{border-bottom:none}
 .cal-day.future{opacity:.35}
 .cal-sum{display:flex;gap:8px;margin-top:12px;justify-content:center;flex-wrap:wrap}
 /* ---------- workout plates & template ---------- */
-.plate-total{font-size:12px;font-weight:800;color:var(--accent-2);white-space:nowrap;min-width:58px;text-align:center;font-variant-numeric:tabular-nums}
+.plate-total{font-size:11.5px;font-weight:800;color:var(--accent-2);white-space:nowrap;min-width:46px;text-align:center;font-variant-numeric:tabular-nums;flex:none}
 .bar-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:8px}
 .bar-row input{width:74px;border:1px solid var(--border);background:var(--surface-2);border-radius:10px;padding:6px 8px;min-height:38px;font-size:14px;text-align:center}
 .seg.mini{padding:3px;margin-bottom:8px}
 .seg.mini button{min-height:34px;padding:4px 8px;font-size:11.5px;border-radius:9px}
+.diff-btn{width:30px;height:30px;min-height:30px;min-width:30px;border-radius:9px;font-weight:800;font-size:14px;flex:none;padding:0}
+.diff-btn.diff-clean{background:var(--good-bg);color:var(--good)}
+.diff-btn.diff-hard{background:rgba(234,161,0,.16);color:#b45309}
+[data-theme="dark"] .diff-btn.diff-hard{color:#fab219}
+.diff-btn.diff-failure{background:var(--bad-bg);color:var(--bad)}
+.suggest-hint{font-size:12px;color:var(--text-2);font-weight:600;background:var(--surface-2);border-radius:10px;padding:7px 10px;margin-bottom:8px;line-height:1.5}
 @media(min-width:700px){
   .stat-row{grid-template-columns:repeat(3,1fr)}
   .chart-wrap canvas{height:230px}
@@ -549,6 +555,11 @@ const I18N = {
     'ex.tabs':'בטן — כפיפות בטן על בוסו',
     'wk.calendar':'יומן אימונים','wk.weekCount':'השבוע: {n}','wk.monthCount':'החודש: {n}',
     'cal.days':'א,ב,ג,ד,ה,ו,ש',
+    'wk.diffClean':'נקי','wk.diffHard':'קשה','wk.diffFailure':'כשל',
+    'wk.diffSet':'קושי הסט: {d}',
+    'wk.suggestClean':'פעם קודמת ({prevReps}×{prevWeight}, ✓ נקי) ← מוצע היום: {reps}×{weight}',
+    'wk.suggestHard':'פעם קודמת ({prevReps}×{prevWeight}, ≈ קשה) ← נשאר באותו עומס: {reps}×{weight}',
+    'wk.suggestFailure':'פעם קודמת ({prevReps}×{prevWeight}, ✕ כשל) ← מוצע להקל מעט: {reps}×{weight}',
   },
   en: {
     'app.title':'Nutrition & Shred','app.sub':'Nutrition · Measurements · Workouts',
@@ -634,6 +645,11 @@ const I18N = {
     'ex.tabs':'Abs — crunches on bosu ball',
     'wk.calendar':'Workout calendar','wk.weekCount':'This week: {n}','wk.monthCount':'This month: {n}',
     'cal.days':'S,M,T,W,T,F,S',
+    'wk.diffClean':'Clean','wk.diffHard':'Hard','wk.diffFailure':'Failure',
+    'wk.diffSet':'Set difficulty: {d}',
+    'wk.suggestClean':'Last time ({prevReps}×{prevWeight}, ✓ clean) → suggested today: {reps}×{weight}',
+    'wk.suggestHard':'Last time ({prevReps}×{prevWeight}, ≈ hard) → staying at the same load: {reps}×{weight}',
+    'wk.suggestFailure':'Last time ({prevReps}×{prevWeight}, ✕ failure) → suggested a bit easier: {reps}×{weight}',
   }
 };
 function t(key, vars){
@@ -1769,9 +1785,16 @@ function renderWorkout(){
 
 /* --- workout editor (supports total-weight or plates+bar entry per exercise) --- */
 function exPref(exId){ return (state.exPrefs && state.exPrefs[exId]) || { entry:'total', barWeight:20 }; }
+const DIFF_ORDER = ['clean', 'hard', 'failure'];
+const DIFF_ICON = { clean:'✓', hard:'≈', failure:'✕' };
+function diffBtnHTML(diff){
+  diff = diff || 'clean';
+  return `<button type="button" class="diff-btn diff-${diff}" data-action="wk-cycle-diff" data-diff="${diff}" title="${esc(t('wk.diffSet',{d:t('wk.diff'+diff[0].toUpperCase()+diff.slice(1))}))}">${DIFF_ICON[diff]}</button>`;
+}
 function wkSetRow(s, i, mode, bar){
   const inputStyle = 'border:1px solid var(--border);background:var(--surface-2);border-radius:10px;padding:8px 10px;min-height:42px;font-size:15px';
   const reps = `<input class="ws-reps" type="number" inputmode="numeric" min="1" max="200" placeholder="${esc(t('wk.reps'))}" value="${s && s.reps != null ? s.reps : ''}" style="${inputStyle}">`;
+  const diffBtn = diffBtnHTML(s && s.difficulty);
   if (mode === 'plates'){
     const side = s && s.weight != null ? Math.max(0, (s.weight - (bar || 0)) / 2) : '';
     const total = s && s.weight != null ? '= ' + fmtNum(s.weight) : '';
@@ -1779,12 +1802,14 @@ function wkSetRow(s, i, mode, bar){
       <span class="set-n">${i+1}</span>${reps}
       <input class="ws-side" type="number" inputmode="decimal" step="0.5" min="0" max="300" placeholder="${esc(t('wk.perSide'))}" value="${side}" style="${inputStyle}">
       <span class="plate-total">${total}</span>
+      ${diffBtn}
       <button class="mini-btn" data-action="wk-remove-set">✕</button>
     </div>`;
   }
   return `<div class="wk-set">
     <span class="set-n">${i+1}</span>${reps}
     <input class="ws-weight" type="number" inputmode="decimal" step="0.5" min="0" max="600" placeholder="${esc(t('wk.weight'))} (${t('common.kg')})" value="${s && s.weight != null ? s.weight : ''}" style="${inputStyle}">
+    ${diffBtn}
     <button class="mini-btn" data-action="wk-remove-set">✕</button>
   </div>`;
 }
@@ -1803,6 +1828,7 @@ function wkExBlock(entry){
       <input class="wk-new-name" placeholder="${esc(t('wk.exerciseName'))}" style="display:none;flex:1;border:1px solid var(--accent-2);background:var(--surface-2);border-radius:10px;padding:8px 10px;min-height:42px;font-size:15px">
       <button class="mini-btn" data-action="wk-remove-ex">🗑</button>
     </div>
+    ${entry && entry.note ? `<div class="suggest-hint">💡 ${esc(entry.note)}</div>` : ''}
     <div class="seg mini">
       <button class="${mode==='total'?'on':''}" data-action="wk-entry-mode" data-mode="total">${t('wk.entryTotal')}</button>
       <button class="${mode==='plates'?'on':''}" data-action="wk-entry-mode" data-mode="plates">${t('wk.entryPlates')}</button>
@@ -1838,7 +1864,8 @@ function convertBlockMode(block, newMode){
   const sets = [...block.querySelectorAll('.wk-set')].map(row => {
     const reps = parseNum(row.querySelector('.ws-reps').value);
     const weight = rowWeight(row, oldMode, bar);
-    return (reps === null && weight === null) ? null : { reps, weight };
+    const difficulty = row.querySelector('.diff-btn').dataset.diff;
+    return (reps === null && weight === null) ? null : { reps, weight, difficulty };
   });
   block.dataset.mode = newMode;
   block.querySelectorAll('.seg.mini button').forEach(b => b.classList.toggle('on', b.dataset.mode === newMode));
@@ -1879,7 +1906,8 @@ function openWorkoutModal(id, prefill){
           if (reps === null && weight === null) return;
           if (weight === null) weight = 0; // bodyweight set
           if (reps === null || reps <= 0 || reps > 200 || weight < 0 || weight > 600){ bad = true; return; }
-          sets.push({ reps: Math.round(reps), weight });
+          const difficulty = row.querySelector('.diff-btn').dataset.diff;
+          sets.push({ reps: Math.round(reps), weight, difficulty });
         });
         if (sets.length){
           entries.push({ exerciseId: exId, sets });
@@ -1934,21 +1962,38 @@ function lastEntryFor(exId){
   }
   return null;
 }
-/* build today's workout from the template; every set defaults to the matching set
-   of the previous workout (per-set memory → reverse pyramid friendly) */
+/* progressive-overload suggestion from one rated set: clean → push reps, then
+   weight once the rep ceiling (target+2) is hit; hard → repeat; failure → back off ~10% */
+function roundWeight(w){ return Math.round(w * 2) / 2; }
+function nextSetSuggestion(prevSet, targetReps){
+  const diff = prevSet.difficulty || 'clean';
+  if (targetReps == null) return { reps: prevSet.reps, weight: prevSet.weight }; // to-failure sets: just copy
+  if (diff === 'failure') return { reps: targetReps, weight: roundWeight(prevSet.weight * 0.9) };
+  if (diff === 'hard') return { reps: prevSet.reps, weight: prevSet.weight };
+  if (prevSet.reps >= targetReps + 2) return { reps: targetReps, weight: roundWeight(prevSet.weight + 2.5) };
+  return { reps: prevSet.reps + 1, weight: prevSet.weight };
+}
+/* build today's workout from the template; every set defaults to a suggestion
+   derived from the matching set of the previous workout and how it was rated */
 function startFromTemplate(){
   const entries = (state.template || []).map(tp => {
     if (!getExercise(tp.exerciseId)) return null;
     const prev = lastEntryFor(tp.exerciseId);
+    let note = null;
     const sets = Array.from({ length: tp.sets }, (_, i) => {
-      if (prev && prev.sets[i]) return { reps: prev.sets[i].reps, weight: prev.sets[i].weight };
-      if (prev && prev.sets.length){
-        const lastSet = prev.sets[prev.sets.length - 1];
-        return { reps: tp.reps ?? lastSet.reps, weight: lastSet.weight };
-      }
-      return { reps: tp.reps, weight: null };
+      const prevSet = prev ? (prev.sets[i] || prev.sets[prev.sets.length - 1]) : null;
+      if (!prevSet) return { reps: tp.reps, weight: null };
+      const sug = nextSetSuggestion(prevSet, tp.reps);
+      return { reps: sug.reps, weight: sug.weight };
     });
-    return { exerciseId: tp.exerciseId, sets };
+    if (prev && prev.sets.length && tp.reps != null){
+      const lastPrev = prev.sets[Math.min(tp.sets, prev.sets.length) - 1];
+      const diff = lastPrev.difficulty || 'clean';
+      const sug = nextSetSuggestion(lastPrev, tp.reps);
+      const key = diff === 'failure' ? 'wk.suggestFailure' : diff === 'hard' ? 'wk.suggestHard' : 'wk.suggestClean';
+      note = t(key, { prevReps: fmtNum(lastPrev.reps,0), prevWeight: fmtNum(lastPrev.weight), reps: fmtNum(sug.reps,0), weight: fmtNum(sug.weight) });
+    }
+    return { exerciseId: tp.exerciseId, sets, note };
   }).filter(Boolean);
   if (!entries.length){ openTemplateModal(); return; }
   openWorkoutModal(null, { date: todayISO(), entries });
@@ -2363,6 +2408,14 @@ document.addEventListener('click', e => {
     case 'wk-entry-mode': {
       const block = el.closest('.wk-ex-block');
       if (block.dataset.mode !== el.dataset.mode) convertBlockMode(block, el.dataset.mode);
+      break;
+    }
+    case 'wk-cycle-diff': {
+      const next = DIFF_ORDER[(DIFF_ORDER.indexOf(el.dataset.diff) + 1) % DIFF_ORDER.length];
+      el.dataset.diff = next;
+      el.className = 'diff-btn diff-' + next;
+      el.textContent = DIFF_ICON[next];
+      el.title = t('wk.diffSet', { d: t('wk.diff' + next[0].toUpperCase() + next.slice(1)) });
       break;
     }
     case 'wk-edit': openWorkoutModal(el.dataset.id); break;
