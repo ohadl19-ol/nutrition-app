@@ -346,7 +346,9 @@ tr:last-child td{border-bottom:none}
 .danger-text{color:var(--bad)}
 /* ---------- meal card v2 ---------- */
 .meal2{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
-.m2-head{display:flex;align-items:center;gap:9px;padding:12px 14px;color:#fff}
+.m2-head{display:flex;align-items:center;gap:9px;padding:12px 14px;color:#fff;cursor:pointer}
+.m2-chevron{flex:none;font-size:13px;transition:transform .2s;opacity:.9}
+.m2-head.expanded .m2-chevron{transform:rotate(180deg)}
 .m2-head .m2-emoji{font-size:21px;flex:none}
 .m2-head .m2-name{font-weight:800;font-size:15.5px;flex:1;min-width:0}
 .m2-head .m2-time{font-size:11.5px;font-weight:700;background:rgba(255,255,255,.22);border-radius:999px;padding:2px 9px;flex:none}
@@ -1273,6 +1275,7 @@ function renderHome(){
 
 /* --- meal card v2: colored header, groups, raw/cooked columns --- */
 const cookedView = new Set(); // meal ids currently showing the cooked column (session-only)
+const expandedMeals = new Set(); // meal ids currently expanded (session-only; all collapsed by default)
 function itemRowV2(it, showAfter){
   const raw = it.rawness === 'raw';
   const grams = parseGrams(it.qty);
@@ -1298,15 +1301,17 @@ function mealCardV2(meal, opts){
       `<button class="mini-btn" data-action="meal-down" data-id="${meal.id}" aria-label="down">↓</button>` : '') +
     `<button class="mini-btn" data-action="edit-meal" data-id="${meal.id}" aria-label="edit">✎</button>` +
     `<button class="mini-btn" data-action="del-meal" data-id="${meal.id}" aria-label="delete">🗑</button>`;
+  const expanded = expandedMeals.has(meal.id);
+  const chevron = `<span class="m2-chevron">⌄</span>`;
   if (isInfo){
     const bullets = (meal.groups || []).flatMap(gr => gr.items).map(it =>
       `<li>${esc(it.name)}${it.qty ? ' · ' + esc(it.qty) : ''}</li>`).join('');
     return `<div class="meal2 ${meal.color === 'tips' ? 'tips' : ''}">
-      <div class="m2-head ${colorCls}">
+      <div class="m2-head ${colorCls}${expanded ? ' expanded' : ''}" data-action="toggle-meal-expand" data-id="${meal.id}">
         <span class="m2-emoji">${esc(meal.emoji || '📋')}</span>
-        <span class="m2-name">${esc(meal.name)}</span>${btns}
+        <span class="m2-name">${esc(meal.name)}</span>${btns}${chevron}
       </div>
-      <ul class="m2-bullets">${bullets}</ul>
+      ${expanded ? `<ul class="m2-bullets">${bullets}</ul>` : ''}
     </div>`;
   }
   // hide carb groups entirely on rest days
@@ -1322,20 +1327,21 @@ function mealCardV2(meal, opts){
       ${cols}${gr.items.map(it => itemRowV2(it, showAfter)).join('')}`;
   }).join('');
   return `<div class="meal2 ${opts.done ? 'done' : ''}">
-    <div class="m2-head ${colorCls}">
+    <div class="m2-head ${colorCls}${expanded ? ' expanded' : ''}" data-action="toggle-meal-expand" data-id="${meal.id}">
       ${opts.checkable ? `<button class="meal-check" data-action="toggle-meal" data-id="${meal.id}" aria-label="check">✓</button>` : ''}
       <span class="m2-emoji">${esc(meal.emoji || '🍽️')}</span>
       <span class="m2-name">${esc(meal.name)}</span>
       ${meal.trainingOnly ? `<span class="tonly-tag">${t('menu.trainingOnly')}</span>` : ''}
       ${meal.time ? `<span class="m2-time">🕐 ${esc(meal.time)}</span>` : ''}
-      ${btns}
+      ${btns}${chevron}
     </div>
+    ${expanded ? `
     ${meal.cond ? `<div class="m2-cond">${esc(meal.cond)}</div>` : ''}
     ${convertible ? `<div class="m2-toggle"><label class="switch"><input type="checkbox" data-action-change="toggle-cooked" data-id="${meal.id}" ${showAfter ? 'checked' : ''}><i></i></label>${t('menu.showCooked')}</div>` : ''}
     <div class="m2-body">${body}
       ${meal.warn ? `<div class="warn-line"><span>⚠️</span><span>${esc(meal.warn)}</span></div>` : ''}
       ${meal.hl ? `<div class="hl-line">★ ${esc(meal.hl)}</div>` : ''}
-    </div>
+    </div>` : ''}
   </div>`;
 }
 
@@ -2328,6 +2334,12 @@ document.addEventListener('click', e => {
       // prune checks older than 90 days
       Object.keys(state.checks).forEach(d => { if (daysBetween(d, day) > 90) delete state.checks[d]; });
       save();
+      if (currentTab === 'home') renderHome(); else renderMenu();
+      break;
+    }
+    case 'toggle-meal-expand': {
+      const id = el.dataset.id;
+      if (expandedMeals.has(id)) expandedMeals.delete(id); else expandedMeals.add(id);
       if (currentTab === 'home') renderHome(); else renderMenu();
       break;
     }
