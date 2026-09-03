@@ -472,14 +472,14 @@ tr:last-child td{border-bottom:none}
    All data in localStorage under one key. No external runtime deps.
    ============================================================ */
 const LS_KEY = 'nutritionApp';
-const DATA_VERSION = 2;
+const DATA_VERSION = 3;
 
 /* ---------------- i18n ---------------- */
 const I18N = {
   he: {
     'app.title':'תזונה וחיטוב','app.sub':'מעקב תזונה · מדידות · אימונים',
     'nav.home':'בית','nav.menu':'תפריט','nav.measure':'מדידות','nav.workout':'אימונים','nav.settings':'הגדרות',
-    'mode.cut':'חיטוב','mode.bulk':'מסה',
+    'mode.cut':'חיטוב','mode.bulk':'מסה','mode.maintain':'שימור',
     'mode.since':'החל מ־{date}','mode.day':'יום {n}',
     'mode.title':'מצב {mode}',
     'mode.switchConfirm':'לעבור למצב {mode}? תאריך ההתחלה של המצב יתאפס להיום.',
@@ -569,7 +569,7 @@ const I18N = {
   en: {
     'app.title':'Nutrition & Shred','app.sub':'Nutrition · Measurements · Workouts',
     'nav.home':'Home','nav.menu':'Menu','nav.measure':'Measure','nav.workout':'Workouts','nav.settings':'Settings',
-    'mode.cut':'Cut','mode.bulk':'Bulk',
+    'mode.cut':'Cut','mode.bulk':'Bulk','mode.maintain':'Maintain',
     'mode.since':'since {date}','mode.day':'Day {n}',
     'mode.title':'{mode} mode',
     'mode.switchConfirm':'Switch to {mode} mode? The mode start date will reset to today.',
@@ -683,8 +683,8 @@ function defaultState(){
       goals: { weight:null, waist:null, belly:null, arm:null }
     },
     mode: { current: 'cut', startDate: todayISO() },
-    menus: { cut: { meals: [] }, bulk: { meals: seedBulkMeals() } },
-    checks: {},            // { 'YYYY-MM-DD': { cut:[mealId,...], bulk:[...] } }
+    menus: { cut: { meals: [] }, bulk: { meals: seedBulkMeals() }, maintain: { meals: seedMaintainMeals() } },
+    checks: {},            // { 'YYYY-MM-DD': { cut:[mealId,...], bulk:[...], maintain:[...] } }
     dayTypes: {},          // { 'YYYY-MM-DD': 'training'|'rest' } explicit overrides
     conversions: [
       { id:'chicken', nameKey:'food.chicken', factor:0.70 },
@@ -797,6 +797,103 @@ function seedBulkMeals(){
       ]) ] }
   ];
 }
+/* Default maintenance-mode menu (seeded only when the maintain menu is empty).
+   Same schema as seedBulkMeals(); content transcribed from the personal "שימור" plan. */
+function seedMaintainMeals(){
+  const g = (label, items, carb) => ({ id: uid(), label, carb: !!carb,
+    items: items.map(it => ({ id: uid(), name: it[0], qty: it[1] || '', rawness: it[2] || 'none' })) });
+  const proteinOptions = () => [
+    ['בשר רזה: חזה עוף / פילה עוף / כבד עוף / שייטל / פילה בקר / פסטרמה / חזה הודו / כתף בקר', '300 גרם', 'raw'],
+    ['בשר שמן: סינטה / פרגית / בשר טחון / כרעיים עוף', '200 גרם', 'raw'],
+    ['דג רזה (הכל למעט סלמון ודניס)', '350 גרם', 'raw'],
+    ['דג שמן: סלמון / דניס', '200 גרם', 'raw'],
+    ['טונה במים', '350 גרם'],
+    ['טונה בשמן', '200 גרם'],
+    ["קוטג' / גבינה לבנה 5%", '420 גרם'],
+    ['גבינות קשות 5%: בולגרית / פטה / חמד / צפתית', '320 גרם'],
+    ['גבינה צהובה 9%', '7 פרוסות'],
+    ['ביצים (חצי מכמות החלמון)', '7 יחידות'],
+    ['משקה חלבון: 25 גר׳ חלבון, עד 140 קק״ל, 0% שומן, 0% פחמימה', '3 יחידות'],
+    ['WHEY', '3 סקופים'],
+    ['מעדן חלבון: 20 גר׳ חלבון, עד 8 גר׳ פחמימה, עד 130 קק״ל', '3 יחידות']
+  ];
+  const carbOptions = () => g('330 קל׳ פחמימה — בחר אחד (או חלק מכל אחד)', [
+    ['אורז מבושל', '280 גרם', 'cooked'],
+    ['אורז לפני בישול', '400 גרם', 'raw'],
+    ['לחם לבן', '140 גרם'],
+    ['או במקום הפחמימה: קלוריות חופשיות', '330 קק״ל']
+  ], true);
+  const veg = () => g('ירקות', [['ירקות צבעוניים לבחירה', '250 גרם', 'raw']]);
+  return [
+    { id: uid(), name:'ארוחת צהריים', emoji:'🌞', color:'sun', time:'12:00', type:'meal',
+      cond:'לפחות 3 שעות מההתעוררות · הכמויות לפני בישול · אפשר לשלב אופציות',
+      groups: [ g('חלבון — בחר אחד', proteinOptions()), carbOptions(), veg() ] },
+    { id: uid(), name:'ארוחת ביניים', emoji:'🍫', color:'snack', time:'', type:'meal',
+      cond:'לא חובה',
+      groups: [ g('בחר אחד', [
+        ['מעדן חלבון / משקה חלבון', '1 יחידה'],
+        ['ביצים', '2 יחידות'],
+        ['גבינה צהובה 9%', '2 פרוסות'],
+        ["טונה / קוטג'", '100 גרם']
+      ]) ] },
+    { id: uid(), name:'ארוחת ערב', emoji:'🌙', color:'moon', time:'', type:'meal',
+      cond:'אותן אופציות חלבון כמו בצהריים · הכמויות לפני בישול',
+      groups: [ g('חלבון — בחר אחד', proteinOptions()), carbOptions(), veg() ] },
+    { id: uid(), name:'ארוחת העמסה', emoji:'⚡', color:'bolt', time:'', type:'meal', trainingOnly:true,
+      cond:'חד־שבועית, ביום אימון כוח · מחליפה את ארוחת הצהריים/ערב הסמוכה לאימון · לאכול משעה עד 4 שעות מסוף האימון',
+      warn:'קפה חזק כחצי שעה לפני האימון · אפשר לפצל לשתי ארוחות בטווח 4 שעות מהאימון · לא מוותרים על ההעמסה גם אם היו חריגות בשבוע',
+      groups: [
+        g('חלבון — בחר אחד', [
+          ['בשר רזה', '300 גרם', 'raw'],
+          ['דג רזה', '350 גרם', 'raw'],
+          ['גבינה צהובה 9%', '7 פרוסות']
+        ]),
+        g('פחמימה — בחר אחד', [
+          ['אורז לבן', '800 גרם', 'cooked'],
+          ['תפוח אדמה', '1200 גרם', 'raw'],
+          ['לחם לבן', '400 גרם']
+        ], true),
+        g('או בחוץ — בחר אחד', [
+          ['משולשי פיצה', '4.5 יחידות'],
+          ['רולים סושי עם דג', '4 יחידות']
+        ], true)
+      ] },
+    { id: uid(), name:'יעד קלורי לשימור', emoji:'⚖️', color:'info', time:'', type:'info',
+      groups: [ g('', [
+        ['כדי לשמר את המצב הקיים: כ-2,200 קלוריות ביום וכ-1.5–2 גרם חלבון לכל ק״ג משקל גוף'],
+        ['אין איסור מסוג מזון ואין משמעות מיוחדת לתזמון האוכל — הכול מותר כל עוד שומרים על סך הקלוריות והחלבון הרצוי'],
+        ['בשבועיים הראשונים ייתכנו נוזלים עודפים בגלל כמות פחמימה גדולה יותר — זה זמני'],
+        ['אם יש עלייה במשקל (מעבר לשבועיים הראשונים): להפחית 200 קלוריות ביום'],
+        ['אם יש ירידה במשקל: להוסיף 200 קלוריות ביום'],
+        ['במידה והייתה השמנה: אפשר לחזור לאחד מתפריטי החיטוב ואז לחזור לשימור'],
+        ['במידה ורוצים לבנות מסת שריר: אפשר לעבור לתפריט מסה']
+      ]) ] },
+    { id: uid(), name:'טיפים לשמירה על גוף חטוב', emoji:'💡', color:'tips', time:'', type:'info',
+      groups: [ g('', [
+        ['מומלץ לדלג על ארוחת בוקר — יוצר חיסכון קלורי וכולל יתרונות פיזיולוגיים'],
+        ['אחרי אימוני משקולות: פחמימות שמתפרקות מהר בשילוב חלבון רזה (אורז, תפו״א, לחם)'],
+        ['עדיף להימנע מפחמימות מלאות שמתפרקות לאט ומקטניות'],
+        ['לבצע אימוני משקולות כבדים לכשל לפחות פעמיים בשבוע'],
+        ['אלא אם נוח — אין צורך ב-5–6 ארוחות קטנות ביום; אפשר 2–3 ארוחות גדולות'],
+        ['מאכלים שמוגדרים "בריאים" אך עתירי קלוריות (טחינה, אבוקדו, אגוזים) עלולים לעכב שמירה על המשקל'],
+        ['בין ארוחות, אם רעבים — עדיף לנשנש חלבון רזה ולא פחמימה או ירקות']
+      ]) ] },
+    { id: uid(), name:'כללי התפריט', emoji:'📋', color:'info', time:'', type:'info',
+      groups: [ g('', [
+        ['שוקלים לפני בישול: בשר, עוף, דגים, ירקות ותפוח אדמה · כל השאר אחרי בישול · שקילה אחרי בישול = הפחתת 25% מהכמות'],
+        ['ברעב: פטריות, מלפפונים חמוצים, לבבות דקל וסקיני פסטה — חופשי · אפשר גם תוספת חלבון רזה'],
+        ['שתייה זירו רק בארוחה · קפה ותה חופשי בלי סוכר · חלב עד 200 מ״ל ביום'],
+        ['תיבול יבש חופשי · שמן בספריי או שכבה דקה בלבד'],
+        ['רק במסגרת הקלוריות החופשיות: אבוקדו, טחינה, זיתים, שקדים, אגוזים, חמאת בוטנים, קטניות, בטטה ושיבולת שועל'],
+        ['אם קמים מוקדם: אפשר להחליף בין ארוחת הביניים לארוחת הצהריים'],
+        ['2–3 ליטר מים ביום']
+      ]) ] },
+    { id: uid(), name:'150 קלוריות חופשיות', emoji:'🍬', color:'free', time:'', type:'info',
+      groups: [ g('', [
+        ['150 קלוריות חופשיות בכל יום — ניתן לצבור: 300 קק״ל כל יומיים']
+      ]) ] }
+  ];
+}
 function deepMerge(base, over){
   if (over === null || over === undefined) return base;
   if (Array.isArray(base) || Array.isArray(over) || typeof base !== 'object' || typeof over !== 'object') return over;
@@ -829,6 +926,11 @@ function migrate(s){
     defaultState().exercises.forEach(de => {
       if (!s.exercises.some(e => e.id === de.id)) s.exercises.push(de);
     });
+  }
+  if ((s.version || 1) < 3){
+    // new "maintain" mode/menu — seed it once, only if missing or still empty
+    if (!s.menus.maintain) s.menus.maintain = { meals: seedMaintainMeals() };
+    else if (!s.menus.maintain.meals.length) s.menus.maintain.meals = seedMaintainMeals();
   }
   s.version = DATA_VERSION;
   return s;
@@ -1159,6 +1261,7 @@ function weeklyDelta(field){
 }
 /* smart color: which direction is "good" for this field in the active mode; 0 = neutral */
 function goodDirection(field){
+  if (state.mode.current === 'maintain') return 0; // stability is the goal — neither direction is "good"
   if (state.mode.current === 'cut') return -1;
   if (field === 'weight' || field === 'arm') return 1;
   if (field === 'waist' || field === 'belly') return -1;
@@ -1249,6 +1352,7 @@ function renderHome(){
     <div class="seg grad" style="margin-bottom:14px">
       <button class="${mode==='cut'?'on':''}" data-action="switch-mode" data-mode="cut">${t('mode.cut')}</button>
       <button class="${mode==='bulk'?'on':''}" data-action="switch-mode" data-mode="bulk">${t('mode.bulk')}</button>
+      <button class="${mode==='maintain'?'on':''}" data-action="switch-mode" data-mode="maintain">${t('mode.maintain')}</button>
     </div>
     <div class="stat-row">
       <div class="stat">
@@ -1392,6 +1496,7 @@ function renderMenu(){
     <div class="seg" style="margin-bottom:14px">
       <button class="${menuView==='cut'?'on':''}" data-action="menu-view" data-mode="cut">${t('menu.title',{mode:t('mode.cut')})}</button>
       <button class="${menuView==='bulk'?'on':''}" data-action="menu-view" data-mode="bulk">${t('menu.title',{mode:t('mode.bulk')})}</button>
+      <button class="${menuView==='maintain'?'on':''}" data-action="menu-view" data-mode="maintain">${t('menu.title',{mode:t('mode.maintain')})}</button>
     </div>
     ${dayToggle}
     ${mealsHTML}
