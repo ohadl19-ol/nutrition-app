@@ -527,6 +527,7 @@ const I18N = {
     'wk.manage':'ניהול תרגילים','wk.history':'היסטוריה','wk.noData':'אין עדיין אימונים. זמן להתחיל 🏋️',
     'wk.demo':'▶ הדגמה','wk.exerciseLink':'קישור הדגמה (אופציונלי)',
     'wk.maxWeight':'משקל מקסימלי','wk.volume':'נפח (סטים×חזרות×משקל)','wk.prs':'שיאים אישיים',
+    'wk.exerciseLibrary':'📚 תרגילים והדגמות','wk.libraryHint':'עיון בסרטוני הדגמה לפי תרגיל, בלי צורך לפתוח אימון',
     'wk.noPrs':'עדיין אין שיאים — הם יופיעו אוטומטית אחרי האימון הראשון',
     'wk.newPr':'שיא חדש! 🎉','wk.prIn':'{w} ק״ג ב{ex}','wk.pr':'שיא',
     'wk.exerciseInUse':'התרגיל בשימוש באימונים קיימים ולכן יוסתר מהרשימה בלבד. להמשיך?',
@@ -619,6 +620,7 @@ const I18N = {
     'wk.manage':'Manage exercises','wk.history':'History','wk.noData':'No workouts yet. Time to start 🏋️',
     'wk.demo':'▶ Demo','wk.exerciseLink':'Demo link (optional)',
     'wk.maxWeight':'Max weight','wk.volume':'Volume (sets×reps×weight)','wk.prs':'Personal records',
+    'wk.exerciseLibrary':'📚 Exercises & demos','wk.libraryHint':'Browse demo videos by exercise, no need to start a workout',
     'wk.noPrs':'No PRs yet — they will appear automatically after your first workout',
     'wk.newPr':'New PR! 🎉','wk.prIn':'{w} kg on {ex}','wk.pr':'PR',
     'wk.exerciseInUse':'This exercise is used in existing workouts, so it will only be hidden from the list. Continue?',
@@ -1880,6 +1882,7 @@ function renderCalendarCard(){
     </div>
   </div>`;
 }
+let prExpanded = false; // session-only; PR list collapsed by default, same pattern as meal/workout cards
 function renderWorkout(){
   const prs = prMap();
   const prRows = Object.entries(prs)
@@ -1922,11 +1925,15 @@ function renderWorkout(){
       <button class="btn ghost" data-action="wk-template" style="flex:1">${t('wk.template')}</button>
     </div>
     <button class="btn ghost sm full" data-action="wk-add" style="margin-bottom:14px">+ ${t('wk.add')}</button>
+    <button class="btn ghost sm full" data-action="wk-exercise-library" style="margin-bottom:14px">${t('wk.exerciseLibrary')}</button>
     ${renderCalendarCard()}
     <div class="card">
-      <h2>🏆 ${t('wk.prs')}
-        <span class="h-actions"><button class="btn ghost sm" data-action="wk-manage">${t('wk.manage')}</button></span></h2>
-      ${prRows || `<div class="empty" style="padding:14px">${t('wk.noPrs')}</div>`}
+      <h2 class="wk-card-head${prExpanded ? ' expanded' : ''}" data-action="toggle-pr-expand">🏆 ${t('wk.prs')}
+        <span class="h-actions">
+          <button class="btn ghost sm" data-action="wk-manage" style="align-self:center">${t('wk.manage')}</button>
+          <span class="m2-chevron">⌄</span>
+        </span></h2>
+      ${prExpanded ? (prRows || `<div class="empty" style="padding:14px">${t('wk.noPrs')}</div>`) : ''}
     </div>
     ${wkCards || `<div class="empty"><span class="big">🏋️</span>${t('wk.noData')}</div>`}`;
 }
@@ -2226,6 +2233,19 @@ function openExerciseModal(exId){
   }));
 }
 /* --- manage exercises modal --- */
+/* --- exercise library: pure browsing, no workout needed --- */
+function openExerciseLibrary(){
+  const rows = visibleExercises().map(ex => `
+    <div class="frow" style="align-items:center;margin-bottom:0;padding:10px 0;border-bottom:1px solid var(--grid)">
+      <div style="flex:1;font-weight:700;font-size:14.5px">${esc(exName(ex))}</div>
+      ${ex.link
+        ? `<a class="yt-btn" href="${esc(ex.link)}" target="_blank" rel="noopener">${t('wk.demo')}</a>`
+        : `<span class="hint" style="margin:0">—</span>`}
+    </div>`).join('');
+  openModal(t('wk.exerciseLibrary'), `
+    <p class="hint" style="margin-bottom:10px">${t('wk.libraryHint')}</p>
+    ${rows}`, { noFoot: true });
+}
 function openManageExercises(){
   const rows = visibleExercises().map(e => `
     <div class="ex-row" data-id="${e.id}" style="margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--grid)">
@@ -2499,6 +2519,8 @@ document.addEventListener('click', e => {
       renderWorkout();
       break;
     }
+    case 'toggle-pr-expand': prExpanded = !prExpanded; renderWorkout(); break;
+    case 'wk-exercise-library': openExerciseLibrary(); break;
     case 'menu-view': menuView = el.dataset.mode; if (currentTab === 'home') renderHome(); else renderMenu(); break;
     case 'add-meal': openMealModal(null); break;
     case 'edit-meal': openMealModal(el.dataset.id); break;
