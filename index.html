@@ -480,7 +480,7 @@ tr:last-child td{border-bottom:none}
    All data in localStorage under one key. No external runtime deps.
    ============================================================ */
 const LS_KEY = 'nutritionApp';
-const DATA_VERSION = 4;
+const DATA_VERSION = 5;
 
 /* ---------------- i18n ---------------- */
 const I18N = {
@@ -539,6 +539,9 @@ const I18N = {
     'st.importConfirm':'הייבוא ידרוס את כל הנתונים הקיימים. להמשיך?',
     'st.importOk':'הנתונים יובאו בהצלחה ✓','st.importErr':'קובץ לא תקין — הייבוא בוטל',
     'st.exportOk':'הגיבוי הורד ✓',
+    'st.lastBackup':'גיבוי אחרון: {date} ({n} ימים)','st.neverBackedUp':'עדיין לא בוצע גיבוי',
+    'backup.reminder':'לא גיבית כבר {n} ימים — כדאי לייצא גיבוי','backup.reminderNever':'עדיין לא ייצאת גיבוי — כדאי להתחיל',
+    'backup.exportNow':'ייצוא עכשיו',
     'st.reset':'איפוס כל הנתונים','st.resetSub':'מחיקה מלאה ללא אפשרות שחזור',
     'st.resetConfirm1':'לאפס את כל הנתונים? כל הארוחות, המדידות והאימונים יימחקו.',
     'st.resetConfirm2':'אישור אחרון: הפעולה תמחק הכול לצמיתות. בטוח?',
@@ -632,6 +635,9 @@ const I18N = {
     'st.importConfirm':'Import will overwrite ALL existing data. Continue?',
     'st.importOk':'Data imported successfully ✓','st.importErr':'Invalid file — import cancelled',
     'st.exportOk':'Backup downloaded ✓',
+    'st.lastBackup':'Last backup: {date} ({n} days ago)','st.neverBackedUp':'No backup exported yet',
+    'backup.reminder':"You haven't backed up in {n} days — it's a good idea to export one",'backup.reminderNever':"You haven't exported a backup yet — worth starting",
+    'backup.exportNow':'Export now',
     'st.reset':'Reset all data','st.resetSub':'Permanent deletion, no recovery',
     'st.resetConfirm1':'Reset all data? All meals, measurements and workouts will be deleted.',
     'st.resetConfirm2':'Final confirmation: this permanently deletes everything. Are you sure?',
@@ -694,10 +700,11 @@ function defaultState(){
       heightCm: null,
       neckCm: null,          // one-time neck circumference for US Navy body fat
       cookedFactor: 0.75,    // raw → cooked weight (25% reduction)
-      goals: { weight:null, waist:null, belly:null, arm:null }
+      goals: { weight:null, waist:null, belly:null, arm:null },
+      lastBackupAt: null     // ISO date of the last JSON export, for the periodic backup reminder
     },
     mode: { current: 'cut', startDate: todayISO() },
-    menus: { cut: { meals: [] }, bulk: { meals: seedBulkMeals() }, maintain: { meals: seedMaintainMeals() } },
+    menus: { cut: { meals: seedCutMeals() }, bulk: { meals: seedBulkMeals() }, maintain: { meals: seedMaintainMeals() } },
     checks: {},            // { 'YYYY-MM-DD': { cut:[mealId,...], bulk:[...], maintain:[...] } }
     dayTypes: {},          // { 'YYYY-MM-DD': 'training'|'rest' } explicit overrides
     conversions: [
@@ -908,6 +915,91 @@ function seedMaintainMeals(){
       ]) ] }
   ];
 }
+/* Default cut-mode menu (seeded only when the cut menu is empty).
+   Same schema as seedBulkMeals()/seedMaintainMeals(); content transcribed from the personal weight-loss plan. */
+function seedCutMeals(){
+  const g = (label, items, carb) => ({ id: uid(), label, carb: !!carb,
+    items: items.map(it => ({ id: uid(), name: it[0], qty: it[1] || '', rawness: it[2] || 'none' })) });
+  const proteinOptions = () => [
+    ['בשר רזה: חזה עוף / פילה עוף / כבד עוף / שייטל / פילה בקר / פסטרמה / חזה הודו / כתף בקר', '300 גרם', 'raw'],
+    ['בשר שמן: סינטה / פרגית / בשר טחון / כרעיים עוף', '200 גרם', 'raw'],
+    ['דג רזה (הכל למעט סלמון ודניס)', '350 גרם', 'raw'],
+    ['דג שמן: סלמון / דניס', '200 גרם', 'raw'],
+    ['טונה במים', '350 גרם'],
+    ['טונה בשמן', '200 גרם'],
+    ["קוטג' / גבינה לבנה 5%", '420 גרם'],
+    ['גבינות קשות 5%: בולגרית / פטה / חמד / צפתית', '320 גרם'],
+    ['גבינה צהובה 9%', '7 פרוסות'],
+    ['ביצים (חצי מכמות החלמון)', '7 יחידות'],
+    ['משקה חלבון: 25 גר׳ חלבון, עד 140 קק״ל, 0% שומן, 0% פחמימה', '3 יחידות'],
+    ['WHEY', '3 סקופים'],
+    ['מעדן חלבון: 20 גר׳ חלבון, עד 8 גר׳ פחמימה, עד 130 קק״ל', '3 יחידות']
+  ];
+  const veg = () => g('ירקות', [['ירקות צבעוניים לבחירה', '250 גרם', 'raw']]);
+  return [
+    { id: uid(), name:'ארוחת צהריים', emoji:'🌞', color:'sun', time:'12:00', type:'meal',
+      cond:'לפחות 3 שעות מההתעוררות · חלבון לפני בישול, פחמימה אחרי בישול · אפשר לשלב אופציות',
+      groups: [
+        g('חלבון — בחר אחד', proteinOptions()),
+        g('פחמימה — בחר אחת', [
+          ['אורז לבן', '180 גרם', 'cooked'],
+          ['תפוח אדמה', '270 גרם', 'cooked'],
+          ['לחם לבן', '100 גרם'],
+          ['פסטה, פתיתים או קוסקוס', '140 גרם', 'cooked'],
+          ['דפי אורז', '7 יחידות']
+        ], true),
+        veg()
+      ] },
+    { id: uid(), name:'ארוחת ביניים', emoji:'🍫', color:'snack', time:'', type:'meal',
+      cond:'לא חובה',
+      groups: [ g('בחר אחד', [
+        ['מעדן חלבון / משקה חלבון', '1 יחידה'],
+        ['ביצים', '2 יחידות'],
+        ['גבינה צהובה 9%', '2 פרוסות'],
+        ["טונה / קוטג'", '100 גרם']
+      ]) ] },
+    { id: uid(), name:'ארוחת ערב', emoji:'🌙', color:'moon', time:'', type:'meal',
+      cond:'הפחמימה תמיד מגיעה בארוחה שאחרי אימון ערב/צהריים — ראו "ארוחת צהריים"',
+      groups: [ g('חלבון — בחר אחד', proteinOptions()), veg() ] },
+    { id: uid(), name:'ארוחת העמסה', emoji:'⚡', color:'bolt', time:'', type:'meal', trainingOnly:true,
+      cond:'חד־שבועית, אחרי אימון כוח · לאכול משעה עד 4 שעות מסוף האימון',
+      warn:'קפה חזק כחצי שעה לפני האימון · אפשר לפצל לשתי ארוחות בטווח 4 שעות מהאימון · לא מוותרים על ההעמסה גם אם היו חריגות בשבוע',
+      groups: [
+        g('חלבון — בחר אחד', [
+          ['בשר רזה', '300 גרם', 'raw'],
+          ['דג רזה', '350 גרם', 'raw'],
+          ['גבינה צהובה 9%', '7 פרוסות']
+        ]),
+        g('פחמימה — בחר אחד', [
+          ['אורז לבן', '800 גרם', 'cooked'],
+          ['תפוח אדמה', '1200 גרם', 'raw'],
+          ['לחם לבן', '400 גרם']
+        ], true),
+        g('או בחוץ — בחר אחד', [
+          ['משולשי פיצה', '4.5 יחידות'],
+          ['רולים סושי עם דג', '4 יחידות']
+        ], true)
+      ] },
+    { id: uid(), name:'כללי התפריט', emoji:'📋', color:'info', time:'', type:'info',
+      groups: [ g('', [
+        ['שוקלים לפני בישול: בשר, עוף, דגים, ירקות ותפוח אדמה · כל השאר אחרי בישול · שקילה אחרי בישול = הפחתת 25% מהכמות'],
+        ['ברעב: פטריות, מלפפונים חמוצים, לבבות דקל וסקיני פסטה — חופשי · אפשר גם תוספת חלבון רזה'],
+        ['בצום בוקר אפשר להיעזר בסודה וקפה המדכאים תיאבון'],
+        ['שתייה זירו רק בארוחה · קפה ותה חופשי בלי סוכר (אפשר ממתיקים) · חלב עד כוס (200 מ״ל) ביום'],
+        ['תיבול יבש חופשי · שמן בספריי או שכבה דקה בלבד, בלי שמן בסלט, לא מטוגן'],
+        ['רק במסגרת הקלוריות החופשיות: אבוקדו, טחינה, זיתים, שקדים, אגוזים, חמאת בוטנים, קטניות, בטטה ושיבולת שועל'],
+        ['אם קמים מוקדם: אפשר להחליף בין ארוחת הביניים לארוחת הצהריים'],
+        ['ניתן לפצל את ההעמסה לשתי ארוחות בטווח 4 שעות מהאימון · אם האימון בצהריים מחליפים בין ארוחת הצהריים להעמסה'],
+        ['לא לוותר על ההעמסה גם אם היו חריגות במהלך השבוע'],
+        ['2–3 ליטר מים ביום']
+      ]) ] },
+    { id: uid(), name:'150 קלוריות חופשיות', emoji:'🍬', color:'free', time:'', type:'info',
+      groups: [ g('', [
+        ['150 קלוריות חופשיות בכל יום — ניתן לצבור: 300 קק״ל כל יומיים'],
+        ['דוגמאות: 3 צ׳ייסרים / כוס וויסקי (60 מ״ל) / כוס יין (רבע בקבוק) / שליש בירה / תפוח / בננה / 3 תמרים / 150 גרם אבטיח או תותים / 6 קוביות שוקולד פרה / חצי קינדר בואנו (שורה אחת) / 2 כפות מיונז / כף טחינה גולמית / כף וחצי שמן זית / כוס מיץ (250 מ״ל) / 5 כפיות סוכר / 3 כפיות חמאת בוטנים']
+      ]) ] }
+  ];
+}
 function deepMerge(base, over){
   if (over === null || over === undefined) return base;
   if (Array.isArray(base) || Array.isArray(over) || typeof base !== 'object' || typeof over !== 'object') return over;
@@ -951,6 +1043,11 @@ function migrate(s){
     const defaultLinks = {};
     defaultState().exercises.forEach(de => { if (de.link) defaultLinks[de.id] = de.link; });
     s.exercises.forEach(e => { if (!e.link && defaultLinks[e.id]) e.link = defaultLinks[e.id]; });
+  }
+  if ((s.version || 1) < 5){
+    // cut-mode menu now has default content too — seed it once, only if missing or still empty
+    if (!s.menus.cut) s.menus.cut = { meals: seedCutMeals() };
+    else if (!s.menus.cut.meals.length) s.menus.cut.meals = seedCutMeals();
   }
   s.version = DATA_VERSION;
   return s;
@@ -1347,6 +1444,21 @@ function modeSwitchBanner(viewMode){
     <button class="btn sm" data-action="switch-mode" data-mode="${viewMode}">${t('mode.switchToThis')}</button>
   </div>`;
 }
+/* periodic backup nudge: only bothers you once there's actually something worth losing */
+function hasBackupWorthyData(){
+  return state.measurements.length > 0 || state.workouts.length > 0 || Object.keys(state.checks).length > 0;
+}
+function backupReminderBanner(){
+  if (!hasBackupWorthyData()) return '';
+  const d = daysSinceBackup();
+  if (d === null || d >= 14){
+    return `<div class="view-banner">
+      <span>💾 ${esc(d === null ? t('backup.reminderNever') : t('backup.reminder',{n:d}))}</span>
+      <button class="btn sm" data-action="set-export">${t('backup.exportNow')}</button>
+    </div>`;
+  }
+  return '';
+}
 function renderHome(){
   const mode = state.mode.current;
   const modeName = t('mode.' + mode);
@@ -1380,6 +1492,7 @@ function renderHome(){
         <div class="day-chip">${esc(t(dt === 'training' ? 'day.training' : 'day.rest'))}</div>
       </div>
     </div>
+    ${backupReminderBanner()}
     <div class="seg grad" style="margin-bottom:10px">
       <button class="${menuView==='cut'?'on':''}" data-action="menu-view" data-mode="cut">${t('mode.cut')}</button>
       <button class="${menuView==='bulk'?'on':''}" data-action="menu-view" data-mode="bulk">${t('mode.bulk')}</button>
@@ -2365,6 +2478,8 @@ function renderSettings(){
     </div>
     <div class="card">
       <h2>${t('st.data')}</h2>
+      <p class="hint" style="margin:-6px 0 12px">${(() => { const d = daysSinceBackup();
+        return d === null ? t('st.neverBackedUp') : t('st.lastBackup',{date:fmtDate(state.settings.lastBackupAt), n:d}); })()}</p>
       <button class="btn ghost full" data-action="set-export" style="margin-bottom:10px">📤 ${t('st.export')}</button>
       <button class="btn ghost full" data-action="set-import" style="margin-bottom:10px">📥 ${t('st.import')}</button>
       <input type="file" id="importFile" accept=".json,application/json" style="display:none">
@@ -2398,7 +2513,14 @@ function exportData(){
   a.download = 'nutrition-backup-' + todayISO() + '.json';
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  state.settings.lastBackupAt = todayISO();
+  save();
+  if (currentTab === 'home') renderHome(); else if (currentTab === 'settings') renderSettings();
   toast(t('st.exportOk'));
+}
+/* days since the last export; null if never backed up */
+function daysSinceBackup(){
+  return state.settings.lastBackupAt ? daysBetween(state.settings.lastBackupAt, todayISO()) : null;
 }
 function handleImportFile(e){
   const file = e.target.files[0];
