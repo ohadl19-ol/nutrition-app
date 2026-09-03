@@ -388,6 +388,8 @@ tr:last-child td{border-bottom:none}
 .hl-line{font-size:12.5px;font-weight:700;color:var(--good);margin-top:8px}
 .meal2.tips{border-color:rgba(12,163,12,.45);background:color-mix(in srgb,#0ca30c 6%,var(--surface))}
 .rest-tag{display:inline-flex;align-items:center;gap:6px;background:var(--bad-bg);color:var(--bad);border-radius:999px;padding:5px 13px;font-size:12.5px;font-weight:700;margin-bottom:12px}
+.view-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:9px 14px;margin-bottom:14px;font-size:12.5px;font-weight:600;color:var(--text-2)}
+.view-banner .btn{flex:none}
 .tonly-tag{display:inline-block;background:rgba(255,255,255,.24);border-radius:999px;padding:2px 9px;font-size:10.5px;font-weight:700;flex:none}
 .m2-toggle{display:flex;align-items:center;gap:9px;padding:9px 14px 0;font-size:12.5px;font-weight:700;color:var(--text-2)}
 .m2-bullets{padding:6px 14px 12px;list-style:none}
@@ -480,6 +482,7 @@ const I18N = {
     'app.title':'תזונה וחיטוב','app.sub':'מעקב תזונה · מדידות · אימונים',
     'nav.home':'בית','nav.menu':'תפריט','nav.measure':'מדידות','nav.workout':'אימונים','nav.settings':'הגדרות',
     'mode.cut':'חיטוב','mode.bulk':'מסה','mode.maintain':'שימור',
+    'mode.viewing':'צופה בתפריט {mode}','mode.switchToThis':'עבור למצב זה',
     'mode.since':'החל מ־{date}','mode.day':'יום {n}',
     'mode.title':'מצב {mode}',
     'mode.switchConfirm':'לעבור למצב {mode}? תאריך ההתחלה של המצב יתאפס להיום.',
@@ -570,6 +573,7 @@ const I18N = {
     'app.title':'Nutrition & Shred','app.sub':'Nutrition · Measurements · Workouts',
     'nav.home':'Home','nav.menu':'Menu','nav.measure':'Measure','nav.workout':'Workouts','nav.settings':'Settings',
     'mode.cut':'Cut','mode.bulk':'Bulk','mode.maintain':'Maintain',
+    'mode.viewing':'Viewing the {mode} menu','mode.switchToThis':'Switch to this',
     'mode.since':'since {date}','mode.day':'Day {n}',
     'mode.title':'{mode} mode',
     'mode.switchConfirm':'Switch to {mode} mode? The mode start date will reset to today.',
@@ -1319,6 +1323,14 @@ function weeklyAdherence(){
 /* ============================================================
    TAB: Home
    ============================================================ */
+/* browsing a menu that isn't the active program: a non-destructive preview,
+   with an explicit, separate action to actually commit to that program */
+function modeSwitchBanner(viewMode){
+  return `<div class="view-banner">
+    <span>👁️ ${esc(t('mode.viewing',{mode:t('mode.'+viewMode)}))}</span>
+    <button class="btn sm" data-action="switch-mode" data-mode="${viewMode}">${t('mode.switchToThis')}</button>
+  </div>`;
+}
 function renderHome(){
   const mode = state.mode.current;
   const modeName = t('mode.' + mode);
@@ -1327,17 +1339,20 @@ function renderHome(){
   const last = lastMeasurement();
   const wd = weeklyDelta('weight');
   const gp = goalProgress('weight');
-  const meals = checkableMeals(mode, todayISO());
-  const checked = todayChecks();
-  const adhToday = meals.length ? Math.round((checked.filter(id => meals.some(m => m.id === id)).length / meals.length) * 100) : null;
-  const adhWeek = weeklyAdherence();
+  if (!menuView) menuView = mode;
+  const isActive = menuView === mode;
+  const viewName = t('mode.' + menuView);
+  const meals = checkableMeals(menuView, todayISO());
+  const checked = todayChecks(mode);
+  const adhToday = isActive && meals.length ? Math.round((checked.filter(id => meals.some(m => m.id === id)).length / meals.length) * 100) : null;
+  const adhWeek = isActive ? weeklyAdherence() : null;
 
   let mealsHTML;
   if (!meals.length){
-    mealsHTML = `<div class="empty"><span class="big">🍽️</span>${esc(t('home.noMeals',{mode:modeName}))}<br><br>
+    mealsHTML = `<div class="empty"><span class="big">🍽️</span>${esc(t('home.noMeals',{mode:viewName}))}<br><br>
       <button class="btn sm" data-action="goto-menu">${t('home.goToMenu')}</button></div>`;
   } else {
-    mealsHTML = meals.map(m => mealCardV2(m, { checkable:true, done: checked.includes(m.id), dayType: dt })).join('');
+    mealsHTML = meals.map(m => mealCardV2(m, { checkable:isActive, done: isActive && checked.includes(m.id), dayType: dt, reorder:true })).join('');
   }
 
   $('#tab-home').innerHTML = `
@@ -1349,11 +1364,12 @@ function renderHome(){
         <div class="day-chip">${esc(t(dt === 'training' ? 'day.training' : 'day.rest'))}</div>
       </div>
     </div>
-    <div class="seg grad" style="margin-bottom:14px">
-      <button class="${mode==='cut'?'on':''}" data-action="switch-mode" data-mode="cut">${t('mode.cut')}</button>
-      <button class="${mode==='bulk'?'on':''}" data-action="switch-mode" data-mode="bulk">${t('mode.bulk')}</button>
-      <button class="${mode==='maintain'?'on':''}" data-action="switch-mode" data-mode="maintain">${t('mode.maintain')}</button>
+    <div class="seg grad" style="margin-bottom:10px">
+      <button class="${menuView==='cut'?'on':''}" data-action="menu-view" data-mode="cut">${t('mode.cut')}</button>
+      <button class="${menuView==='bulk'?'on':''}" data-action="menu-view" data-mode="bulk">${t('mode.bulk')}</button>
+      <button class="${menuView==='maintain'?'on':''}" data-action="menu-view" data-mode="maintain">${t('mode.maintain')}</button>
     </div>
+    ${!isActive ? modeSwitchBanner(menuView) : ''}
     <div class="stat-row">
       <div class="stat">
         <div class="lbl">${t('home.lastWeight')}</div>
@@ -1370,7 +1386,7 @@ function renderHome(){
     </div>
     ${gp !== null ? `<div class="card" style="padding:12px 16px"><div class="meter"><i style="width:${Math.round(gp)}%"></i></div></div>` : ''}
     <div class="card">
-      <h2>${t('home.todayMeals')}
+      <h2>${isActive ? t('home.todayMeals') : t('menu.title',{mode:viewName})}
         <span style="display:flex;gap:6px;font-size:11.5px;font-weight:600;color:var(--muted)">
           ${adhToday !== null ? `<span class="delta ${adhToday>=80?'good':'flat'}">${t('home.adherenceToday')}: ${adhToday}%</span>` : ''}
           ${adhWeek !== null ? `<span class="delta flat">${t('home.adherenceWeek')}: ${adhWeek}%</span>` : ''}
@@ -1498,6 +1514,7 @@ function renderMenu(){
       <button class="${menuView==='bulk'?'on':''}" data-action="menu-view" data-mode="bulk">${t('menu.title',{mode:t('mode.bulk')})}</button>
       <button class="${menuView==='maintain'?'on':''}" data-action="menu-view" data-mode="maintain">${t('menu.title',{mode:t('mode.maintain')})}</button>
     </div>
+    ${!isActive ? modeSwitchBanner(menuView) : ''}
     ${dayToggle}
     ${mealsHTML}
     <button class="btn full" data-action="add-meal" style="margin:4px 0 20px">+ ${t('menu.addMeal')}</button>
@@ -2431,7 +2448,8 @@ document.addEventListener('click', e => {
       if (!confirm(t('mode.switchConfirm', { mode: t('mode.' + m) }))) break;
       state.mode = { current: m, startDate: todayISO() };
       menuView = m;
-      save(); renderHome();
+      save();
+      if (currentTab === 'home') renderHome(); else renderMenu();
       break;
     }
     case 'toggle-meal': {
@@ -2460,12 +2478,12 @@ document.addEventListener('click', e => {
       renderWorkout();
       break;
     }
-    case 'menu-view': menuView = el.dataset.mode; renderMenu(); break;
+    case 'menu-view': menuView = el.dataset.mode; if (currentTab === 'home') renderHome(); else renderMenu(); break;
     case 'add-meal': openMealModal(null); break;
-    case 'edit-meal': { if (currentTab === 'home') menuView = state.mode.current; openMealModal(el.dataset.id); break; }
+    case 'edit-meal': openMealModal(el.dataset.id); break;
     case 'del-meal': {
       if (!confirm(t('common.deleteConfirm'))) break;
-      const view = currentTab === 'home' ? state.mode.current : menuView;
+      const view = menuView || state.mode.current;
       state.menus[view].meals = state.menus[view].meals.filter(m => m.id !== el.dataset.id);
       save(); renderMenu(); renderHome(); toast(t('common.deleted'));
       break;
@@ -2521,7 +2539,8 @@ document.addEventListener('click', e => {
       const j = a === 'meal-up' ? i - 1 : i + 1;
       if (i >= 0 && j >= 0 && j < arr.length){
         [arr[i], arr[j]] = [arr[j], arr[i]];
-        save(); renderMenu();
+        save();
+        if (currentTab === 'home') renderHome(); else renderMenu();
       }
       break;
     }
