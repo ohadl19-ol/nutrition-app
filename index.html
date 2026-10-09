@@ -2581,10 +2581,13 @@ function pickerRow(ex){
   </div>`;
 }
 let pickerSelected = [];
+// the original seed exercises (used by the quick-start template) are kept for history/template lookups
+// but no longer clutter the picker — only the muscle-grouped library from extraExercises() shows there
+const LEGACY_EXERCISE_IDS = ['squat','deadlift','bench','pullup','ohp','row','tchest','tback','tlegs','tshoulders','tbiceps','ttriceps','tabs'];
 function renderPickerBody(){
-  const all = visibleExercises();
+  const all = visibleExercises().filter(e => !LEGACY_EXERCISE_IDS.includes(e.id));
   const favs = all.filter(e => e.favorite);
-  const recents = recentExerciseIds(8).map(id => getExercise(id)).filter(e => e && !e.hidden);
+  const recents = recentExerciseIds(8).map(id => getExercise(id)).filter(e => e && !e.hidden && !LEGACY_EXERCISE_IDS.includes(e.id));
   const byGroup = {};
   all.forEach(e => { const g = e.muscleGroup || '_none'; (byGroup[g] = byGroup[g] || []).push(e); });
 
