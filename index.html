@@ -551,7 +551,7 @@ tr:last-child td{border-bottom:none}
    All data in localStorage under one key. No external runtime deps.
    ============================================================ */
 const LS_KEY = 'nutritionApp';
-const DATA_VERSION = 6;
+const DATA_VERSION = 7;
 
 /* ---------------- i18n ---------------- */
 const I18N = {
@@ -656,6 +656,16 @@ const I18N = {
     'ex.tbiceps':'יד קדמית — כפיפת מרפקים בעמידה',
     'ex.ttriceps':'יד אחורית — פשיטת מרפקים בפולי / מאחורי הראש',
     'ex.tabs':'בטן — כפיפות בטן על בוסו',
+    'ex.incline_bench':'לחיצת חזה בשיפוע עליון','ex.dips':'מקבילים','ex.db_bench':'לחיצת חזה עם משקולות','ex.chest_fly':'פרפר',
+    'ex.lat_pulldown':'משיכת פולי עליון','ex.face_pull':'משיכת פנים','ex.seated_row':'חתירה בכבל בישיבה',
+    'ex.front_squat':'סקוואט קדמי','ex.rdl':'דדליפט רומני','ex.hip_thrust':'הרמת אגן','ex.leg_press':'לחיצת רגליים במכונה',
+    'ex.leg_extension':'פשיטת ברכיים במכונה','ex.leg_curl':'כפיפת ברכיים במכונה','ex.db_lunge':'מכרעים עם משקולות',
+    'ex.calf_raise':'הרמת עקבים בעמידה','ex.hip_adductor':'מקרבי ירך במכונה',
+    'ex.db_shoulder_press':'לחיצת כתפיים עם משקולות','ex.lateral_raise':'הרחקת זרועות לצדדים','ex.upright_row':'משיכת סנטר',
+    'ex.shrugs':'משיכת כתפיים','ex.rear_delt_fly':'הרחקה אחורית בשכיבה',
+    'ex.cable_curl':'כפיפת מרפק בכבל','ex.db_curl':'כפיפת מרפק עם משקולות','ex.wrist_curl':'כפיפת שורש כף יד',
+    'ex.close_grip_bench':'לחיצת ספסל צרה','ex.cable_pushdown':'פשיטת מרפק בפולי','ex.oh_triceps_ext':'פשיטת מרפק מאחורי הראש','ex.skull_crusher':'צרפתי בשכיבה',
+    'ex.ab_wheel':'גלגלת בטן','ex.hanging_leg_raise':'הרמת רגליים בתלייה','ex.crunches':'כפיפות בטן','ex.plank':'פלאנק','ex.russian_twist':'רוסיאן טוויסט',
     'wk.calendar':'יומן אימונים','wk.weekCount':'השבוע: {n}','wk.monthCount':'החודש: {n}',
     'cal.days':'א,ב,ג,ד,ה,ו,ש',
     'wk.diffClean':'נקי','wk.diffHard':'קשה','wk.diffFailure':'כשל',
@@ -765,6 +775,16 @@ const I18N = {
     'ex.tbiceps':'Biceps — standing curls',
     'ex.ttriceps':'Triceps — cable / overhead extensions',
     'ex.tabs':'Abs — crunches on bosu ball',
+    'ex.incline_bench':'Incline bench press','ex.dips':'Dips','ex.db_bench':'Dumbbell press','ex.chest_fly':'Chest fly',
+    'ex.lat_pulldown':'Lat pulldown','ex.face_pull':'Face pull','ex.seated_row':'Seated cable row',
+    'ex.front_squat':'Front squat','ex.rdl':'Romanian deadlift','ex.hip_thrust':'Hip thrust','ex.leg_press':'Leg press',
+    'ex.leg_extension':'Leg extension','ex.leg_curl':'Leg curl','ex.db_lunge':'Dumbbell lunges',
+    'ex.calf_raise':'Standing calf raise','ex.hip_adductor':'Hip adductor machine',
+    'ex.db_shoulder_press':'Dumbbell shoulder press','ex.lateral_raise':'Lateral raise','ex.upright_row':'Upright row',
+    'ex.shrugs':'Shrugs','ex.rear_delt_fly':'Rear delt fly',
+    'ex.cable_curl':'Cable curl','ex.db_curl':'Dumbbell curl','ex.wrist_curl':'Wrist curl',
+    'ex.close_grip_bench':'Close-grip bench press','ex.cable_pushdown':'Cable pushdown','ex.oh_triceps_ext':'Overhead triceps extension','ex.skull_crusher':'Lying French press',
+    'ex.ab_wheel':'Ab wheel rollout','ex.hanging_leg_raise':'Hanging leg raise','ex.crunches':'Crunches','ex.plank':'Plank','ex.russian_twist':'Russian twist',
     'wk.calendar':'Workout calendar','wk.weekCount':'This week: {n}','wk.monthCount':'This month: {n}',
     'cal.days':'S,M,T,W,T,F,S',
     'wk.diffClean':'Clean','wk.diffHard':'Hard','wk.diffFailure':'Failure',
@@ -827,7 +847,8 @@ function defaultState(){
       { id:'tshoulders', nameKey:'ex.tshoulders', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%9b%d7%aa%d7%a4%d7%99%d7%99%d7%9d/', muscleGroup:'shoulders', equipment:'משקולות · בידוד' },
       { id:'tbiceps', nameKey:'ex.tbiceps', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%99%d7%93-%d7%a7%d7%93%d7%9e%d7%99%d7%aa/', muscleGroup:'arms', equipment:'מוט · בידוד' },
       { id:'ttriceps', nameKey:'ex.ttriceps', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%99%d7%93-%d7%90%d7%97%d7%95%d7%a8%d7%99%d7%aa/', muscleGroup:'arms', equipment:'כבל · בידוד' },
-      { id:'tabs', nameKey:'ex.tabs', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%91%d7%98%d7%9f/', muscleGroup:'abs', equipment:'משקל גוף · בידוד' }
+      { id:'tabs', nameKey:'ex.tabs', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%91%d7%98%d7%9f/', muscleGroup:'abs', equipment:'משקל גוף · בידוד' },
+      ...extraExercises()
     ],
     template: defaultTemplate(),  // fixed workout template [{exerciseId,sets,reps|null}]
     exPrefs: {},           // { exerciseId: { entry:'total'|'plates', barWeight } }
@@ -843,6 +864,45 @@ function defaultTemplate(){
     { exerciseId:'tbiceps',    sets:3, reps:12 },
     { exerciseId:'ttriceps',   sets:3, reps:12 },
     { exerciseId:'tabs',       sets:3, reps:null }  // null = to failure
+  ];
+}
+/* Extra exercise library seeded from the IronFlow reference app, grouped by muscle.
+   No demo `link` field — these have no matching doreckstein.co.il video. */
+function extraExercises(){
+  return [
+    { id:'incline_bench',     nameKey:'ex.incline_bench',     hidden:false, muscleGroup:'chest',     equipment:'מוט · מורכב' },
+    { id:'dips',              nameKey:'ex.dips',              hidden:false, muscleGroup:'chest',     equipment:'משקל גוף · מורכב' },
+    { id:'db_bench',          nameKey:'ex.db_bench',          hidden:false, muscleGroup:'chest',     equipment:'משקולות · מורכב' },
+    { id:'chest_fly',         nameKey:'ex.chest_fly',         hidden:false, muscleGroup:'chest',     equipment:'מכונה · בידוד' },
+    { id:'lat_pulldown',      nameKey:'ex.lat_pulldown',      hidden:false, muscleGroup:'back',      equipment:'כבל · מורכב' },
+    { id:'face_pull',         nameKey:'ex.face_pull',         hidden:false, muscleGroup:'back',      equipment:'כבל · בידוד' },
+    { id:'seated_row',        nameKey:'ex.seated_row',        hidden:false, muscleGroup:'back',      equipment:'כבל · מורכב' },
+    { id:'front_squat',       nameKey:'ex.front_squat',       hidden:false, muscleGroup:'legs',      equipment:'מוט · מורכב' },
+    { id:'rdl',               nameKey:'ex.rdl',               hidden:false, muscleGroup:'legs',      equipment:'מוט · מורכב' },
+    { id:'hip_thrust',        nameKey:'ex.hip_thrust',        hidden:false, muscleGroup:'legs',      equipment:'מוט · מורכב' },
+    { id:'leg_press',         nameKey:'ex.leg_press',         hidden:false, muscleGroup:'legs',      equipment:'מכונה · מורכב' },
+    { id:'leg_extension',     nameKey:'ex.leg_extension',     hidden:false, muscleGroup:'legs',      equipment:'מכונה · בידוד' },
+    { id:'leg_curl',          nameKey:'ex.leg_curl',          hidden:false, muscleGroup:'legs',      equipment:'מכונה · בידוד' },
+    { id:'db_lunge',          nameKey:'ex.db_lunge',          hidden:false, muscleGroup:'legs',      equipment:'משקולות · מורכב' },
+    { id:'calf_raise',        nameKey:'ex.calf_raise',        hidden:false, muscleGroup:'legs',      equipment:'מכונה · בידוד' },
+    { id:'hip_adductor',      nameKey:'ex.hip_adductor',      hidden:false, muscleGroup:'legs',      equipment:'מכונה · בידוד' },
+    { id:'db_shoulder_press', nameKey:'ex.db_shoulder_press', hidden:false, muscleGroup:'shoulders', equipment:'משקולות · מורכב' },
+    { id:'lateral_raise',     nameKey:'ex.lateral_raise',     hidden:false, muscleGroup:'shoulders', equipment:'משקולות · בידוד' },
+    { id:'upright_row',       nameKey:'ex.upright_row',       hidden:false, muscleGroup:'shoulders', equipment:'מוט · בידוד' },
+    { id:'shrugs',            nameKey:'ex.shrugs',            hidden:false, muscleGroup:'shoulders', equipment:'משקולות · בידוד' },
+    { id:'rear_delt_fly',     nameKey:'ex.rear_delt_fly',     hidden:false, muscleGroup:'shoulders', equipment:'משקולות · בידוד' },
+    { id:'cable_curl',        nameKey:'ex.cable_curl',        hidden:false, muscleGroup:'arms',      equipment:'כבל · בידוד' },
+    { id:'db_curl',           nameKey:'ex.db_curl',           hidden:false, muscleGroup:'arms',      equipment:'משקולות · בידוד' },
+    { id:'wrist_curl',        nameKey:'ex.wrist_curl',        hidden:false, muscleGroup:'arms',      equipment:'משקולות · בידוד' },
+    { id:'close_grip_bench',  nameKey:'ex.close_grip_bench',  hidden:false, muscleGroup:'arms',      equipment:'מוט · מורכב' },
+    { id:'cable_pushdown',    nameKey:'ex.cable_pushdown',    hidden:false, muscleGroup:'arms',      equipment:'כבל · בידוד' },
+    { id:'oh_triceps_ext',    nameKey:'ex.oh_triceps_ext',    hidden:false, muscleGroup:'arms',      equipment:'משקולות · בידוד' },
+    { id:'skull_crusher',     nameKey:'ex.skull_crusher',     hidden:false, muscleGroup:'arms',      equipment:'מוט · בידוד' },
+    { id:'ab_wheel',          nameKey:'ex.ab_wheel',          hidden:false, muscleGroup:'abs',       equipment:'גלגלת · בידוד' },
+    { id:'hanging_leg_raise', nameKey:'ex.hanging_leg_raise', hidden:false, muscleGroup:'abs',       equipment:'משקל גוף · בידוד' },
+    { id:'crunches',          nameKey:'ex.crunches',          hidden:false, muscleGroup:'abs',       equipment:'משקל גוף · בידוד' },
+    { id:'plank',             nameKey:'ex.plank',             hidden:false, muscleGroup:'abs',       equipment:'משקל גוף · בידוד' },
+    { id:'russian_twist',     nameKey:'ex.russian_twist',     hidden:false, muscleGroup:'abs',       equipment:'משקל גוף · בידוד' }
   ];
 }
 /* Default bulk-mode menu (seeded only when the bulk menu is empty).
@@ -1158,6 +1218,12 @@ function migrate(s){
       if (!e.equipment && d.equipment) e.equipment = d.equipment;
     });
     if (!s.settings.restSeconds) s.settings.restSeconds = 90;
+  }
+  if ((s.version || 1) < 7){
+    // add the extra exercise library (from the reference app) for existing users too, once
+    defaultState().exercises.forEach(de => {
+      if (!s.exercises.some(e => e.id === de.id)) s.exercises.push(de);
+    });
   }
   s.version = DATA_VERSION;
   return s;
