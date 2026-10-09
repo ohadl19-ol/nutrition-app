@@ -551,7 +551,7 @@ tr:last-child td{border-bottom:none}
    All data in localStorage under one key. No external runtime deps.
    ============================================================ */
 const LS_KEY = 'nutritionApp';
-const DATA_VERSION = 10;
+const DATA_VERSION = 11;
 
 /* ---------------- i18n ---------------- */
 const I18N = {
@@ -604,7 +604,7 @@ const I18N = {
     'wk.savedWorkoutNamePrompt':'שם לאימון השמור:','wk.savedWorkoutSaved':'האימון נשמר ✓','wk.swapExercise':'החלפת תרגיל',
     'wk.selectedCount':'{n} נבחרו','wk.startEmptyWorkout':'התחל אימון ריק',
     'wk.startFromTemplateShort':'התחל מהתוכנית','wk.startWorkoutN':'התחל אימון ({n})',
-    'wk.quickSet':'⚡ סט מהיר','wk.finishSetStartRest':'סיים סט · התחל מנוחה',
+    'wk.quickSet':'⚡ סט מהיר','wk.dropSet':'דרופ סט (הפחת משקל)','wk.finishSetStartRest':'סיים סט · התחל מנוחה',
     'wk.nextExercise':'לתרגיל הבא →','wk.prevExercise':'← תרגיל קודם','wk.finishWorkout':'סיום אימון',
     'wk.exerciseOf':'תרגיל {i} מתוך {n}','wk.previous':'קודם','wk.rest':'מנוחה',
     'wk.restSetDone':'סט {i}/{n} הושלם · {reps}×{weight}','wk.restTapDefault':'לחץ לשינוי ברירת מחדל',
@@ -725,7 +725,7 @@ const I18N = {
     'wk.savedWorkoutNamePrompt':'Name for the saved workout:','wk.savedWorkoutSaved':'Workout saved ✓','wk.swapExercise':'Swap exercise',
     'wk.selectedCount':'{n} selected','wk.startEmptyWorkout':'Start empty workout',
     'wk.startFromTemplateShort':'Start from template','wk.startWorkoutN':'Start workout ({n})',
-    'wk.quickSet':'⚡ Quick set','wk.finishSetStartRest':'Finish set · start rest',
+    'wk.quickSet':'⚡ Quick set','wk.dropSet':'Drop set (reduce weight)','wk.finishSetStartRest':'Finish set · start rest',
     'wk.nextExercise':'Next exercise →','wk.prevExercise':'← Previous exercise','wk.finishWorkout':'Finish workout',
     'wk.exerciseOf':'Exercise {i} of {n}','wk.previous':'Previous','wk.rest':'Rest',
     'wk.restSetDone':'Set {i}/{n} done · {reps}×{weight}','wk.restTapDefault':'Tap to change default',
@@ -850,8 +850,8 @@ function defaultState(){
       { id:'tback', nameKey:'ex.tback', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%92%d7%91/', muscleGroup:'back', equipment:'מוט · מורכב' },
       { id:'tlegs', nameKey:'ex.tlegs', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%a8%d7%92%d7%9c%d7%99%d7%99%d7%9d/', muscleGroup:'legs', equipment:'מכונה · מורכב' },
       { id:'tshoulders', nameKey:'ex.tshoulders', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%9b%d7%aa%d7%a4%d7%99%d7%99%d7%9d/', muscleGroup:'shoulders', equipment:'משקולות · בידוד' },
-      { id:'tbiceps', nameKey:'ex.tbiceps', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%99%d7%93-%d7%a7%d7%93%d7%9e%d7%99%d7%aa/', muscleGroup:'arms', equipment:'מוט · בידוד' },
-      { id:'ttriceps', nameKey:'ex.ttriceps', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%99%d7%93-%d7%90%d7%97%d7%95%d7%a8%d7%99%d7%aa/', muscleGroup:'arms', equipment:'כבל · בידוד' },
+      { id:'tbiceps', nameKey:'ex.tbiceps', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%99%d7%93-%d7%a7%d7%93%d7%9e%d7%99%d7%aa/', muscleGroup:'biceps', equipment:'מוט · בידוד' },
+      { id:'ttriceps', nameKey:'ex.ttriceps', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%99%d7%93-%d7%90%d7%97%d7%95%d7%a8%d7%99%d7%aa/', muscleGroup:'triceps', equipment:'כבל · בידוד' },
       { id:'tabs', nameKey:'ex.tabs', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%91%d7%98%d7%9f/', muscleGroup:'abs', equipment:'משקל גוף · בידוד' },
       ...extraExercises()
     ],
@@ -897,13 +897,13 @@ function extraExercises(){
     { id:'lateral_raise',     nameKey:'ex.lateral_raise',     hidden:false, muscleGroup:'shoulders', equipment:'משקולות · בידוד' },
     { id:'shrugs',            nameKey:'ex.shrugs',            hidden:false, muscleGroup:'shoulders', equipment:'משקולות · בידוד' },
     { id:'rear_delt_fly',     nameKey:'ex.rear_delt_fly',     hidden:false, muscleGroup:'shoulders', equipment:'משקולות · בידוד' },
-    { id:'barbell_curl',      nameKey:'ex.barbell_curl',      hidden:false, muscleGroup:'arms',      equipment:'מוט · בידוד' },
-    { id:'db_curl',           nameKey:'ex.db_curl',           hidden:false, muscleGroup:'arms',      equipment:'משקולות · בידוד' },
-    { id:'hammer_curl',       nameKey:'ex.hammer_curl',       hidden:false, muscleGroup:'arms',      equipment:'משקולות · בידוד' },
-    { id:'wrist_curl',        nameKey:'ex.wrist_curl',        hidden:false, muscleGroup:'arms',      equipment:'משקולות · בידוד' },
-    { id:'close_grip_bench',  nameKey:'ex.close_grip_bench',  hidden:false, muscleGroup:'arms',      equipment:'מוט · מורכב' },
-    { id:'cable_pushdown',    nameKey:'ex.cable_pushdown',    hidden:false, muscleGroup:'arms',      equipment:'כבל · בידוד' },
-    { id:'skull_crusher',     nameKey:'ex.skull_crusher',     hidden:false, muscleGroup:'arms',      equipment:'מוט · בידוד' },
+    { id:'barbell_curl',      nameKey:'ex.barbell_curl',      hidden:false, muscleGroup:'biceps',    equipment:'מוט · בידוד' },
+    { id:'db_curl',           nameKey:'ex.db_curl',           hidden:false, muscleGroup:'biceps',    equipment:'משקולות · בידוד' },
+    { id:'hammer_curl',       nameKey:'ex.hammer_curl',       hidden:false, muscleGroup:'biceps',    equipment:'משקולות · בידוד' },
+    { id:'wrist_curl',        nameKey:'ex.wrist_curl',        hidden:false, muscleGroup:'biceps',    equipment:'משקולות · בידוד' },
+    { id:'close_grip_bench',  nameKey:'ex.close_grip_bench',  hidden:false, muscleGroup:'triceps',   equipment:'מוט · מורכב' },
+    { id:'cable_pushdown',    nameKey:'ex.cable_pushdown',    hidden:false, muscleGroup:'triceps',   equipment:'כבל · בידוד' },
+    { id:'skull_crusher',     nameKey:'ex.skull_crusher',     hidden:false, muscleGroup:'triceps',   equipment:'מוט · בידוד' },
     { id:'ab_wheel',          nameKey:'ex.ab_wheel',          hidden:false, muscleGroup:'abs',       equipment:'גלגלת · בידוד' },
     { id:'hanging_leg_raise', nameKey:'ex.hanging_leg_raise', hidden:false, muscleGroup:'abs',       equipment:'משקל גוף · בידוד' },
     { id:'crunches',          nameKey:'ex.crunches',          hidden:false, muscleGroup:'abs',       equipment:'משקל גוף · בידוד' },
@@ -1250,6 +1250,15 @@ function migrate(s){
     defaultState().exercises.forEach(de => {
       if (!s.exercises.some(e => e.id === de.id)) s.exercises.push(de);
     });
+  }
+  if ((s.version || 1) < 11){
+    // split the combined "arms" muscle group into biceps/triceps so the workout order
+    // (chest -> back -> shoulders -> biceps -> triceps -> legs -> abs) can be followed
+    const reclass = {
+      barbell_curl:'biceps', db_curl:'biceps', hammer_curl:'biceps', wrist_curl:'biceps', tbiceps:'biceps',
+      close_grip_bench:'triceps', cable_pushdown:'triceps', skull_crusher:'triceps', ttriceps:'triceps'
+    };
+    s.exercises.forEach(e => { if (reclass[e.id]) e.muscleGroup = reclass[e.id]; });
   }
   s.version = DATA_VERSION;
   return s;
@@ -2267,12 +2276,15 @@ function rpeToDifficulty(rpe){
   if (rpe >= 8) return 'hard';
   return 'clean';
 }
+// order here is also the canonical workout order (chest -> back -> shoulders -> biceps -> triceps -> legs -> abs),
+// used both for the picker sections and to sequence exercises when a live workout starts
 const MUSCLE_GROUPS = [
   { key:'chest',     emoji:'❤️', label:{he:'חזה', en:'Chest'} },
   { key:'back',      emoji:'🏋️', label:{he:'גב', en:'Back'} },
-  { key:'legs',      emoji:'🦵', label:{he:'רגליים', en:'Legs'} },
   { key:'shoulders', emoji:'🤸', label:{he:'כתפיים', en:'Shoulders'} },
-  { key:'arms',      emoji:'💪', label:{he:'ידיים', en:'Arms'} },
+  { key:'biceps',    emoji:'💪', label:{he:'יד קדמית', en:'Biceps'} },
+  { key:'triceps',   emoji:'💪', label:{he:'יד אחורית', en:'Triceps'} },
+  { key:'legs',      emoji:'🦵', label:{he:'רגליים', en:'Legs'} },
   { key:'abs',       emoji:'🎯', label:{he:'בטן וליבה', en:'Abs & Core'} }
 ];
 function muscleGroupLabel(key){
@@ -2700,9 +2712,17 @@ function openSwapExerciseModal(){
    ============================================================ */
 let liveWorkout = null; // { date, entries:[{exerciseId, sets:[{reps,weight,rpe,difficulty,done}]}] }
 let liveExIndex = 0;
+function sortByMuscleOrder(ids){
+  const order = MUSCLE_GROUPS.map(g => g.key);
+  return [...ids].sort((a, b) => {
+    const ga = order.indexOf((getExercise(a) || {}).muscleGroup);
+    const gb = order.indexOf((getExercise(b) || {}).muscleGroup);
+    return (ga < 0 ? 999 : ga) - (gb < 0 ? 999 : gb);
+  });
+}
 function startLiveWorkoutFromIds(ids){
   if (!ids.length){ toast(t('wk.noExercisesSelected')); return; }
-  const entries = ids.map(exId => {
+  const entries = sortByMuscleOrder(ids).map(exId => {
     const tpl = (state.template || []).find(tp => tp.exerciseId === exId);
     const prev = lastEntryFor(exId);
     const nSets = tpl ? tpl.sets : (prev ? prev.sets.length : 3);
@@ -2720,7 +2740,7 @@ function liveSetRowHTML(s, i){
   return `<div class="live-set-row ${s.done ? 'done' : ''}">
     <div class="live-set-top">
       <button class="live-check" data-action="live-toggle-done" data-idx="${i}">✓</button>
-      <span class="set-label">${i+1}</span>
+      <span class="set-label" ${s.drop ? `title="${esc(t('wk.dropSet'))}"` : ''}>${s.drop ? '↓' : (i+1)}</span>
       <div class="stepper">
         <button data-action="live-step" data-idx="${i}" data-field="weight" data-delta="-2.5">−</button>
         <div class="sv">${s.weight != null ? fmtNum(s.weight) : '—'}<div class="su">${t('common.kg')}</div></div>
@@ -2763,7 +2783,8 @@ function renderLiveWorkout(){
     <div class="frow">
       <button class="btn ghost sm" data-action="live-add-set" style="flex:1">${t('wk.addSet')}</button>
       <button class="btn ghost sm" data-action="live-quick-set" style="flex:1">${t('wk.quickSet')}</button>
-    </div>`;
+    </div>
+    <button class="btn ghost sm full" data-action="live-add-drop-set" style="margin-top:8px">⬇️ ${t('wk.dropSet')}</button>`;
   const lastEx = liveExIndex === liveWorkout.entries.length - 1;
   const footLabel = !allDone ? t('wk.finishSetStartRest') : (lastEx ? t('wk.finishWorkout') : t('wk.nextExercise'));
   openModal(exName(ex), body, { noFoot: true });
@@ -2774,7 +2795,7 @@ function finishLiveWorkout(){
   const entries = liveWorkout.entries.map(en => ({
     exerciseId: en.exerciseId,
     sets: en.sets.filter(s => s.done && s.reps != null).map(s => ({
-      reps: Math.round(s.reps), weight: s.weight ?? 0, difficulty: s.difficulty || rpeToDifficulty(s.rpe), rpe: s.rpe ?? null
+      reps: Math.round(s.reps), weight: s.weight ?? 0, difficulty: s.difficulty || rpeToDifficulty(s.rpe), rpe: s.rpe ?? null, drop: !!s.drop
     }))
   })).filter(en => en.sets.length);
   if (!entries.length){ toast(t('wk.noSets')); return; }
@@ -3238,6 +3259,14 @@ document.addEventListener('click', e => {
       renderLiveWorkout();
       break;
     }
+    case 'live-add-drop-set': {
+      const sets = liveWorkout.entries[liveExIndex].sets;
+      const last = sets[sets.length - 1];
+      const newWeight = (last && last.weight != null) ? Math.max(0, Math.round((last.weight * 0.8) / 2.5) * 2.5) : null;
+      sets.push({ reps: null, weight: newWeight, rpe: null, difficulty: 'failure', done: false, drop: true });
+      renderLiveWorkout();
+      break;
+    }
     case 'live-primary': {
       const entry = liveWorkout.entries[liveExIndex];
       const undoneIdx = entry.sets.findIndex(s => !s.done);
@@ -3245,7 +3274,10 @@ document.addEventListener('click', e => {
         const s = entry.sets[undoneIdx];
         s.done = true;
         renderLiveWorkout();
-        startRestTimer(state.settings.restSeconds, { i: undoneIdx, total: entry.sets.length, reps: s.reps, weight: s.weight });
+        const next = entry.sets[undoneIdx + 1];
+        if (!(next && next.drop && !next.done)){
+          startRestTimer(state.settings.restSeconds, { i: undoneIdx, total: entry.sets.length, reps: s.reps, weight: s.weight });
+        }
       } else if (liveExIndex < liveWorkout.entries.length - 1){
         liveExIndex++;
         renderLiveWorkout();
