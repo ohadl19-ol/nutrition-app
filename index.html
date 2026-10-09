@@ -551,7 +551,7 @@ tr:last-child td{border-bottom:none}
    All data in localStorage under one key. No external runtime deps.
    ============================================================ */
 const LS_KEY = 'nutritionApp';
-const DATA_VERSION = 9;
+const DATA_VERSION = 10;
 
 /* ---------------- i18n ---------------- */
 const I18N = {
@@ -660,7 +660,7 @@ const I18N = {
     'ex.tabs':'בטן — כפיפות בטן על בוסו',
     'ex.flat_bench':'לחיצת חזה במוט','ex.pushup':'שכיבות סמיכה','ex.incline_bench':'לחיצת חזה בשיפוע עליון','ex.dips':'מקבילים','ex.chest_fly':'פרפר בכבלים',
     'ex.lat_pulldown':'משיכת פולי עליון','ex.face_pull':'משיכת פנים','ex.seated_row':'חתירה בכבל בישיבה',
-    'ex.front_squat':'סקוואט קדמי','ex.rdl':'דדליפט רומני','ex.hip_thrust':'הרמת אגן','ex.leg_press':'לחיצת רגליים במכונה',
+    'ex.bodyweight_squat':'סקוואט משקל גוף','ex.front_squat':'סקוואט קדמי','ex.rdl':'דדליפט רומני','ex.hip_thrust':'הרמת אגן','ex.leg_press':'לחיצת רגליים במכונה',
     'ex.leg_extension':'פשיטת ברכיים במכונה','ex.leg_curl':'כפיפת ברכיים במכונה','ex.db_lunge':'מכרעים עם משקולות',
     'ex.calf_raise':'הרמת עקבים בעמידה','ex.hip_adductor':'מקרבי ירך במכונה',
     'ex.db_shoulder_press':'לחיצת כתפיים עם משקולות','ex.lateral_raise':'הרחקת זרועות לצדדים',
@@ -781,7 +781,7 @@ const I18N = {
     'ex.tabs':'Abs — crunches on bosu ball',
     'ex.flat_bench':'Barbell bench press','ex.pushup':'Push-ups','ex.incline_bench':'Incline bench press','ex.dips':'Dips','ex.chest_fly':'Cable fly',
     'ex.lat_pulldown':'Lat pulldown','ex.face_pull':'Face pull','ex.seated_row':'Seated cable row',
-    'ex.front_squat':'Front squat','ex.rdl':'Romanian deadlift','ex.hip_thrust':'Hip thrust','ex.leg_press':'Leg press',
+    'ex.bodyweight_squat':'Bodyweight squat','ex.front_squat':'Front squat','ex.rdl':'Romanian deadlift','ex.hip_thrust':'Hip thrust','ex.leg_press':'Leg press',
     'ex.leg_extension':'Leg extension','ex.leg_curl':'Leg curl','ex.db_lunge':'Dumbbell lunges',
     'ex.calf_raise':'Standing calf raise','ex.hip_adductor':'Hip adductor machine',
     'ex.db_shoulder_press':'Dumbbell shoulder press','ex.lateral_raise':'Lateral raise',
@@ -883,6 +883,7 @@ function extraExercises(){
     { id:'lat_pulldown',      nameKey:'ex.lat_pulldown',      hidden:false, muscleGroup:'back',      equipment:'כבל · מורכב' },
     { id:'face_pull',         nameKey:'ex.face_pull',         hidden:false, muscleGroup:'back',      equipment:'כבל · בידוד' },
     { id:'seated_row',        nameKey:'ex.seated_row',        hidden:false, muscleGroup:'back',      equipment:'כבל · מורכב' },
+    { id:'bodyweight_squat',  nameKey:'ex.bodyweight_squat',  hidden:false, muscleGroup:'legs',      equipment:'משקל גוף · אפשרות דמבל · מורכב' },
     { id:'front_squat',       nameKey:'ex.front_squat',       hidden:false, muscleGroup:'legs',      equipment:'מוט · מורכב' },
     { id:'rdl',               nameKey:'ex.rdl',               hidden:false, muscleGroup:'legs',      equipment:'מוט · מורכב' },
     { id:'hip_thrust',        nameKey:'ex.hip_thrust',        hidden:false, muscleGroup:'legs',      equipment:'מוט · מורכב' },
@@ -1243,6 +1244,12 @@ function migrate(s){
       if (!s.exercises.some(e => e.id === de.id)) s.exercises.push(de);
     });
     if (!s.savedWorkouts) s.savedWorkouts = [];
+  }
+  if ((s.version || 1) < 10){
+    // bodyweight squat (with optional dumbbell) added to the legs group
+    defaultState().exercises.forEach(de => {
+      if (!s.exercises.some(e => e.id === de.id)) s.exercises.push(de);
+    });
   }
   s.version = DATA_VERSION;
   return s;
