@@ -551,7 +551,7 @@ tr:last-child td{border-bottom:none}
    All data in localStorage under one key. No external runtime deps.
    ============================================================ */
 const LS_KEY = 'nutritionApp';
-const DATA_VERSION = 7;
+const DATA_VERSION = 8;
 
 /* ---------------- i18n ---------------- */
 const I18N = {
@@ -656,7 +656,7 @@ const I18N = {
     'ex.tbiceps':'יד קדמית — כפיפת מרפקים בעמידה',
     'ex.ttriceps':'יד אחורית — פשיטת מרפקים בפולי / מאחורי הראש',
     'ex.tabs':'בטן — כפיפות בטן על בוסו',
-    'ex.incline_bench':'לחיצת חזה בשיפוע עליון','ex.dips':'מקבילים','ex.db_bench':'לחיצת חזה עם משקולות','ex.chest_fly':'פרפר',
+    'ex.flat_bench':'לחיצת חזה במוט','ex.pushup':'שכיבות סמיכה','ex.incline_bench':'לחיצת חזה בשיפוע עליון','ex.dips':'מקבילים','ex.db_bench':'לחיצת חזה עם משקולות','ex.chest_fly':'פרפר',
     'ex.lat_pulldown':'משיכת פולי עליון','ex.face_pull':'משיכת פנים','ex.seated_row':'חתירה בכבל בישיבה',
     'ex.front_squat':'סקוואט קדמי','ex.rdl':'דדליפט רומני','ex.hip_thrust':'הרמת אגן','ex.leg_press':'לחיצת רגליים במכונה',
     'ex.leg_extension':'פשיטת ברכיים במכונה','ex.leg_curl':'כפיפת ברכיים במכונה','ex.db_lunge':'מכרעים עם משקולות',
@@ -775,7 +775,7 @@ const I18N = {
     'ex.tbiceps':'Biceps — standing curls',
     'ex.ttriceps':'Triceps — cable / overhead extensions',
     'ex.tabs':'Abs — crunches on bosu ball',
-    'ex.incline_bench':'Incline bench press','ex.dips':'Dips','ex.db_bench':'Dumbbell press','ex.chest_fly':'Chest fly',
+    'ex.flat_bench':'Barbell bench press','ex.pushup':'Push-ups','ex.incline_bench':'Incline bench press','ex.dips':'Dips','ex.db_bench':'Dumbbell press','ex.chest_fly':'Chest fly',
     'ex.lat_pulldown':'Lat pulldown','ex.face_pull':'Face pull','ex.seated_row':'Seated cable row',
     'ex.front_squat':'Front squat','ex.rdl':'Romanian deadlift','ex.hip_thrust':'Hip thrust','ex.leg_press':'Leg press',
     'ex.leg_extension':'Leg extension','ex.leg_curl':'Leg curl','ex.db_lunge':'Dumbbell lunges',
@@ -870,6 +870,8 @@ function defaultTemplate(){
    No demo `link` field — these have no matching doreckstein.co.il video. */
 function extraExercises(){
   return [
+    { id:'flat_bench',        nameKey:'ex.flat_bench',        hidden:false, muscleGroup:'chest',     equipment:'מוט · מורכב' },
+    { id:'pushup',            nameKey:'ex.pushup',            hidden:false, muscleGroup:'chest',     equipment:'משקל גוף · מורכב' },
     { id:'incline_bench',     nameKey:'ex.incline_bench',     hidden:false, muscleGroup:'chest',     equipment:'מוט · מורכב' },
     { id:'dips',              nameKey:'ex.dips',              hidden:false, muscleGroup:'chest',     equipment:'משקל גוף · מורכב' },
     { id:'db_bench',          nameKey:'ex.db_bench',          hidden:false, muscleGroup:'chest',     equipment:'משקולות · מורכב' },
@@ -1221,6 +1223,12 @@ function migrate(s){
   }
   if ((s.version || 1) < 7){
     // add the extra exercise library (from the reference app) for existing users too, once
+    defaultState().exercises.forEach(de => {
+      if (!s.exercises.some(e => e.id === de.id)) s.exercises.push(de);
+    });
+  }
+  if ((s.version || 1) < 8){
+    // flat barbell bench press was missing from the picker list — add it too
     defaultState().exercises.forEach(de => {
       if (!s.exercises.some(e => e.id === de.id)) s.exercises.push(de);
     });
