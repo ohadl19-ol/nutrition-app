@@ -259,6 +259,58 @@ tr:last-child td{border-bottom:none}
 .ex-head .name{font-weight:700;font-size:14.5px}
 .set-line{display:flex;gap:10px;font-size:13px;color:var(--text-2);font-variant-numeric:tabular-nums;padding:2px 0}
 .pr-star{color:var(--s3);font-weight:800}
+/* ---------- exercise picker ---------- */
+.picker-search{width:100%;border:1px solid var(--border);background:var(--surface-2);border-radius:14px;padding:11px 14px;font-size:15px;margin-bottom:14px}
+.picker-section{font-size:12.5px;font-weight:800;color:var(--text-2);margin:14px 2px 6px;display:flex;align-items:center;justify-content:space-between}
+.picker-row{display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--grid)}
+.picker-row:last-child{border-bottom:none}
+.picker-row .pi-name{flex:1;min-width:0;font-weight:700;font-size:14px}
+.picker-row .pi-equip{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.star-btn{flex:none;font-size:19px;color:var(--muted);min-width:38px;min-height:38px}
+.star-btn.on{color:var(--s3)}
+.pick-btn{flex:none;width:36px;height:36px;min-height:36px;border-radius:50%;background:var(--surface-2);border:1px solid var(--border);font-size:18px;font-weight:800;color:var(--text-2)}
+.pick-btn.on{background:var(--grad);color:#fff;border-color:transparent}
+.picker-chips{display:flex;flex-wrap:wrap;gap:6px;padding:10px 0;border-top:1px solid var(--border);margin-top:6px}
+.picker-chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);border-radius:999px;padding:5px 6px 5px 12px;font-size:12.5px;font-weight:700}
+[dir="rtl"] .picker-chip{padding:5px 12px 5px 6px}
+.picker-chip button{width:22px;height:22px;min-height:22px;border-radius:50%;background:var(--grid);font-size:12px}
+/* ---------- live workout ---------- */
+.live-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.live-head .nav-btn{flex:none;width:40px;height:40px;min-height:40px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);font-size:18px}
+.live-head .nav-btn:disabled{opacity:.35}
+.live-title{text-align:center;flex:1;min-width:0}
+.live-title .ex-count{font-size:11.5px;color:var(--muted);font-weight:700}
+.live-title .ex-name{font-size:17px;font-weight:800;margin-top:1px}
+.live-title .ex-equip{font-size:12px;color:var(--text-2);font-weight:600;margin-top:1px}
+.live-stats{display:flex;gap:10px;justify-content:center;margin-bottom:14px}
+.live-stats span{font-size:12.5px;font-weight:700;color:var(--text-2);background:var(--surface-2);border-radius:10px;padding:5px 11px}
+.live-set-row{border:1px solid var(--border);border-radius:14px;padding:10px 12px;margin-bottom:9px;background:var(--surface)}
+.live-set-row.done{border-color:var(--good);background:var(--good-bg)}
+.live-set-top{display:flex;align-items:center;gap:8px}
+.live-check{flex:none;width:30px;height:30px;min-height:30px;border-radius:50%;border:2px solid var(--baseline);color:transparent;font-weight:800;background:var(--surface)}
+.live-set-row.done .live-check{background:var(--good);border-color:var(--good);color:#fff}
+.stepper{display:flex;align-items:center;gap:6px;flex:1}
+.stepper button{flex:none;width:30px;height:30px;min-height:30px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border);font-weight:800;font-size:15px}
+.stepper .sv{flex:1;text-align:center;font-weight:800;font-size:16px;font-variant-numeric:tabular-nums}
+.stepper .su{font-size:10.5px;color:var(--muted);font-weight:600}
+.set-label{flex:none;width:20px;text-align:center;font-weight:800;color:var(--muted);font-size:12.5px}
+.rpe-row{display:flex;gap:5px;margin-top:8px;justify-content:flex-end}
+.rpe-chip{flex:none;min-width:32px;height:28px;min-height:28px;border-radius:8px;background:var(--surface-2);border:1px solid var(--border);font-size:12px;font-weight:700;color:var(--muted)}
+.rpe-chip.on{background:var(--grad);color:#fff;border-color:transparent}
+/* ---------- rest timer overlay ---------- */
+#restOverlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:80;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(3px)}
+#restOverlay.open{display:flex}
+#restOverlay .rest-label{color:#fff;font-size:15px;font-weight:700;opacity:.85}
+#restOverlay .rest-sub{color:rgba(255,255,255,.7);font-size:13px;font-weight:600;margin-top:4px;margin-bottom:28px}
+.rest-ring{width:230px;height:230px;border-radius:50%;display:grid;place-items:center;cursor:pointer}
+.rest-ring .rest-inner{width:198px;height:198px;border-radius:50%;background:#0d0d0d;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.rest-ring .rest-digits{font-size:46px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums}
+.rest-ring .rest-hint{font-size:11px;color:rgba(255,255,255,.55);font-weight:600;margin-top:4px}
+.rest-controls{display:flex;gap:10px;margin-top:28px}
+.rest-controls button{background:rgba(255,255,255,.12);color:#fff;border-radius:13px;padding:10px 18px;font-weight:700;font-size:13.5px;min-height:44px}
+.rest-actions{display:flex;gap:10px;margin-top:14px;width:100%;max-width:340px}
+.rest-actions button{flex:1}
+.rest-actions .btn.ghost{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.2)}
 /* ---------- bottom nav ---------- */
 .bottom-nav{
   position:fixed;bottom:0;inset-inline:0;z-index:40;
@@ -473,6 +525,25 @@ tr:last-child td{border-bottom:none}
 <canvas id="confetti"></canvas>
 <div id="prBanner"><div class="inner"><div class="t1" id="prT1"></div><div class="t2" id="prT2"></div></div></div>
 
+<div id="restOverlay">
+  <div class="rest-label" id="restLabel"></div>
+  <div class="rest-sub" id="restSub"></div>
+  <div class="rest-ring" id="restRing" data-action="rest-tap-ring">
+    <div class="rest-inner">
+      <div class="rest-digits" id="restDigits">00:00</div>
+      <div class="rest-hint" id="restHintText"></div>
+    </div>
+  </div>
+  <div class="rest-controls">
+    <button data-action="rest-adjust" data-delta="-15" id="restMinus15"></button>
+    <button data-action="rest-adjust" data-delta="15" id="restPlus15"></button>
+  </div>
+  <div class="rest-actions">
+    <button class="btn ghost" data-action="rest-pause" id="restPauseBtn"></button>
+    <button class="btn" data-action="rest-next" id="restNextBtn"></button>
+  </div>
+</div>
+
 <script>
 'use strict';
 /* ============================================================
@@ -480,7 +551,7 @@ tr:last-child td{border-bottom:none}
    All data in localStorage under one key. No external runtime deps.
    ============================================================ */
 const LS_KEY = 'nutritionApp';
-const DATA_VERSION = 5;
+const DATA_VERSION = 6;
 
 /* ---------------- i18n ---------------- */
 const I18N = {
@@ -526,6 +597,19 @@ const I18N = {
     'wk.chooseExercise':'בחירת תרגיל','wk.newExercise':'תרגיל חדש...','wk.exerciseName':'שם התרגיל',
     'wk.manage':'ניהול תרגילים','wk.history':'היסטוריה','wk.noData':'אין עדיין אימונים. זמן להתחיל 🏋️',
     'wk.demo':'▶ הדגמה','wk.exerciseLink':'קישור הדגמה (אופציונלי)',
+    'wk.noMuscleGroup':'ללא קטגוריה','wk.liveWorkout':'⚡ אימון חי',
+    'wk.pickExercises':'בחירת תרגילים לאימון','wk.searchExercise':'חיפוש תרגיל',
+    'wk.favorites':'⭐ מועדפים','wk.recentExercises':'🕐 האחרונים שלי',
+    'wk.selectedCount':'{n} נבחרו','wk.startEmptyWorkout':'התחל אימון ריק',
+    'wk.startFromTemplateShort':'התחל מהתוכנית','wk.startWorkoutN':'התחל אימון ({n})',
+    'wk.quickSet':'⚡ סט מהיר','wk.finishSetStartRest':'סיים סט · התחל מנוחה',
+    'wk.nextExercise':'לתרגיל הבא →','wk.prevExercise':'← תרגיל קודם','wk.finishWorkout':'סיום אימון',
+    'wk.exerciseOf':'תרגיל {i} מתוך {n}','wk.previous':'קודם','wk.rest':'מנוחה',
+    'wk.restSetDone':'סט {i}/{n} הושלם · {reps}×{weight}','wk.restTapDefault':'לחץ לשינוי ברירת מחדל',
+    'wk.pause':'השהה','wk.resume':'המשך','wk.skipRest':'דלג על המנוחה','wk.restDone':'זמן המנוחה הסתיים! 💪',
+    'wk.rpe':'RPE','wk.noExercisesSelected':'בחר/י לפחות תרגיל אחד','wk.liveWorkoutSaved':'האימון נשמר ✓',
+    'wk.muscleGroupSetting':'קבוצת שריר','wk.equipmentSetting':'ציוד (אופציונלי)',
+    'wk.markDone':'סמן כבוצע','wk.allSetsDone':'כל הסטים הושלמו',
     'wk.maxWeight':'משקל מקסימלי','wk.volume':'נפח (סטים×חזרות×משקל)','wk.prs':'שיאים אישיים',
     'wk.exerciseLibrary':'📚 תרגילים והדגמות','wk.libraryHint':'עיון בסרטוני הדגמה לפי תרגיל, בלי צורך לפתוח אימון',
     'wk.noPrs':'עדיין אין שיאים — הם יופיעו אוטומטית אחרי האימון הראשון',
@@ -622,6 +706,19 @@ const I18N = {
     'wk.chooseExercise':'Choose exercise','wk.newExercise':'New exercise...','wk.exerciseName':'Exercise name',
     'wk.manage':'Manage exercises','wk.history':'History','wk.noData':'No workouts yet. Time to start 🏋️',
     'wk.demo':'▶ Demo','wk.exerciseLink':'Demo link (optional)',
+    'wk.noMuscleGroup':'Uncategorized','wk.liveWorkout':'⚡ Live Workout',
+    'wk.pickExercises':'Choose exercises for your workout','wk.searchExercise':'Search exercise',
+    'wk.favorites':'⭐ Favorites','wk.recentExercises':'🕐 Recently used',
+    'wk.selectedCount':'{n} selected','wk.startEmptyWorkout':'Start empty workout',
+    'wk.startFromTemplateShort':'Start from template','wk.startWorkoutN':'Start workout ({n})',
+    'wk.quickSet':'⚡ Quick set','wk.finishSetStartRest':'Finish set · start rest',
+    'wk.nextExercise':'Next exercise →','wk.prevExercise':'← Previous exercise','wk.finishWorkout':'Finish workout',
+    'wk.exerciseOf':'Exercise {i} of {n}','wk.previous':'Previous','wk.rest':'Rest',
+    'wk.restSetDone':'Set {i}/{n} done · {reps}×{weight}','wk.restTapDefault':'Tap to change default',
+    'wk.pause':'Pause','wk.resume':'Resume','wk.skipRest':'Skip rest','wk.restDone':'Rest time is up! 💪',
+    'wk.rpe':'RPE','wk.noExercisesSelected':'Choose at least one exercise','wk.liveWorkoutSaved':'Workout saved ✓',
+    'wk.muscleGroupSetting':'Muscle group','wk.equipmentSetting':'Equipment (optional)',
+    'wk.markDone':'Mark done','wk.allSetsDone':'All sets completed',
     'wk.maxWeight':'Max weight','wk.volume':'Volume (sets×reps×weight)','wk.prs':'Personal records',
     'wk.exerciseLibrary':'📚 Exercises & demos','wk.libraryHint':'Browse demo videos by exercise, no need to start a workout',
     'wk.noPrs':'No PRs yet — they will appear automatically after your first workout',
@@ -701,7 +798,8 @@ function defaultState(){
       neckCm: null,          // one-time neck circumference for US Navy body fat
       cookedFactor: 0.75,    // raw → cooked weight (25% reduction)
       goals: { weight:null, waist:null, belly:null, arm:null },
-      lastBackupAt: null     // ISO date of the last JSON export, for the periodic backup reminder
+      lastBackupAt: null,    // ISO date of the last JSON export, for the periodic backup reminder
+      restSeconds: 90        // default rest-timer duration for live workouts
     },
     mode: { current: 'cut', startDate: todayISO() },
     menus: { cut: { meals: seedCutMeals() }, bulk: { meals: seedBulkMeals() }, maintain: { meals: seedMaintainMeals() } },
@@ -717,19 +815,19 @@ function defaultState(){
     ],
     measurements: [],      // [{id,date,weight,waist,belly,arm,neck?}] neck kept for legacy data only
     exercises: [
-      { id:'squat', nameKey:'ex.squat', hidden:false },
-      { id:'deadlift', nameKey:'ex.deadlift', hidden:false },
-      { id:'bench', nameKey:'ex.bench', hidden:false },
-      { id:'pullup', nameKey:'ex.pullup', hidden:false },
-      { id:'ohp', nameKey:'ex.ohp', hidden:false },
-      { id:'row', nameKey:'ex.row', hidden:false },
-      { id:'tchest', nameKey:'ex.tchest', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%97%d7%96%d7%94/' },
-      { id:'tback', nameKey:'ex.tback', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%92%d7%91/' },
-      { id:'tlegs', nameKey:'ex.tlegs', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%a8%d7%92%d7%9c%d7%99%d7%99%d7%9d/' },
-      { id:'tshoulders', nameKey:'ex.tshoulders', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%9b%d7%aa%d7%a4%d7%99%d7%99%d7%9d/' },
-      { id:'tbiceps', nameKey:'ex.tbiceps', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%99%d7%93-%d7%a7%d7%93%d7%9e%d7%99%d7%aa/' },
-      { id:'ttriceps', nameKey:'ex.ttriceps', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%99%d7%93-%d7%90%d7%97%d7%95%d7%a8%d7%99%d7%aa/' },
-      { id:'tabs', nameKey:'ex.tabs', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%91%d7%98%d7%9f/' }
+      { id:'squat', nameKey:'ex.squat', hidden:false, muscleGroup:'legs', equipment:'מוט · מורכב' },
+      { id:'deadlift', nameKey:'ex.deadlift', hidden:false, muscleGroup:'back', equipment:'מוט · מורכב' },
+      { id:'bench', nameKey:'ex.bench', hidden:false, muscleGroup:'chest', equipment:'מוט · מורכב' },
+      { id:'pullup', nameKey:'ex.pullup', hidden:false, muscleGroup:'back', equipment:'משקל גוף · מורכב' },
+      { id:'ohp', nameKey:'ex.ohp', hidden:false, muscleGroup:'shoulders', equipment:'מוט · מורכב' },
+      { id:'row', nameKey:'ex.row', hidden:false, muscleGroup:'back', equipment:'מוט · מורכב' },
+      { id:'tchest', nameKey:'ex.tchest', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%97%d7%96%d7%94/', muscleGroup:'chest', equipment:'מוט/משקל גוף · מורכב' },
+      { id:'tback', nameKey:'ex.tback', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%92%d7%91/', muscleGroup:'back', equipment:'מוט · מורכב' },
+      { id:'tlegs', nameKey:'ex.tlegs', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%a8%d7%92%d7%9c%d7%99%d7%99%d7%9d/', muscleGroup:'legs', equipment:'מכונה · מורכב' },
+      { id:'tshoulders', nameKey:'ex.tshoulders', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%9b%d7%aa%d7%a4%d7%99%d7%99%d7%9d/', muscleGroup:'shoulders', equipment:'משקולות · בידוד' },
+      { id:'tbiceps', nameKey:'ex.tbiceps', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%99%d7%93-%d7%a7%d7%93%d7%9e%d7%99%d7%aa/', muscleGroup:'arms', equipment:'מוט · בידוד' },
+      { id:'ttriceps', nameKey:'ex.ttriceps', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%99%d7%93-%d7%90%d7%97%d7%95%d7%a8%d7%99%d7%aa/', muscleGroup:'arms', equipment:'כבל · בידוד' },
+      { id:'tabs', nameKey:'ex.tabs', hidden:false, link:'https://course.doreckstein.co.il/category/%d7%91%d7%98%d7%9f/', muscleGroup:'abs', equipment:'משקל גוף · בידוד' }
     ],
     template: defaultTemplate(),  // fixed workout template [{exerciseId,sets,reps|null}]
     exPrefs: {},           // { exerciseId: { entry:'total'|'plates', barWeight } }
@@ -1048,6 +1146,18 @@ function migrate(s){
     // cut-mode menu now has default content too — seed it once, only if missing or still empty
     if (!s.menus.cut) s.menus.cut = { meals: seedCutMeals() };
     else if (!s.menus.cut.meals.length) s.menus.cut.meals = seedCutMeals();
+  }
+  if ((s.version || 1) < 6){
+    // classify the built-in exercises by muscle group/equipment, once, only where missing
+    const defaults = {};
+    defaultState().exercises.forEach(de => { defaults[de.id] = de; });
+    s.exercises.forEach(e => {
+      const d = defaults[e.id];
+      if (!d) return;
+      if (!e.muscleGroup && d.muscleGroup) e.muscleGroup = d.muscleGroup;
+      if (!e.equipment && d.equipment) e.equipment = d.equipment;
+    });
+    if (!s.settings.restSeconds) s.settings.restSeconds = 90;
   }
   s.version = DATA_VERSION;
   return s;
@@ -2033,8 +2143,9 @@ function renderWorkout(){
   }).join('');
 
   $('#tab-workout').innerHTML = `
+    <button class="btn full" data-action="wk-live-start" style="margin-bottom:10px">${t('wk.liveWorkout')}</button>
     <div class="frow" style="margin-bottom:10px">
-      <button class="btn" data-action="wk-start" style="flex:2">🏋️ ${t('wk.start')}</button>
+      <button class="btn ghost" data-action="wk-start" style="flex:2">🏋️ ${t('wk.start')}</button>
       <button class="btn ghost" data-action="wk-template" style="flex:1">${t('wk.template')}</button>
     </div>
     <button class="btn ghost sm full" data-action="wk-add" style="margin-bottom:14px">+ ${t('wk.add')}</button>
@@ -2055,6 +2166,28 @@ function renderWorkout(){
 function exPref(exId){ return (state.exPrefs && state.exPrefs[exId]) || { entry:'total', barWeight:20 }; }
 const DIFF_ORDER = ['clean', 'hard', 'failure'];
 const DIFF_ICON = { clean:'✓', hard:'≈', failure:'✕' };
+const RPE_VALUES = [10, 9, 8, 7, 6];
+/* maps an RPE rating onto the existing clean/hard/failure scale, so the
+   progression-suggestion algorithm works the same regardless of which UI logged the set */
+function rpeToDifficulty(rpe){
+  if (rpe == null) return 'clean';
+  if (rpe >= 10) return 'failure';
+  if (rpe >= 8) return 'hard';
+  return 'clean';
+}
+const MUSCLE_GROUPS = [
+  { key:'chest',     emoji:'❤️', label:{he:'חזה', en:'Chest'} },
+  { key:'back',      emoji:'🏋️', label:{he:'גב', en:'Back'} },
+  { key:'legs',      emoji:'🦵', label:{he:'רגליים', en:'Legs'} },
+  { key:'shoulders', emoji:'🤸', label:{he:'כתפיים', en:'Shoulders'} },
+  { key:'arms',      emoji:'💪', label:{he:'ידיים', en:'Arms'} },
+  { key:'abs',       emoji:'🎯', label:{he:'בטן וליבה', en:'Abs & Core'} }
+];
+function muscleGroupLabel(key){
+  const g = MUSCLE_GROUPS.find(m => m.key === key);
+  if (!g) return t('wk.noMuscleGroup');
+  return g.label[state.settings.lang === 'he' ? 'he' : 'en'];
+}
 function diffBtnHTML(diff){
   diff = diff || 'clean';
   return `<button type="button" class="diff-btn diff-${diff}" data-action="wk-cycle-diff" data-diff="${diff}" title="${esc(t('wk.diffSet',{d:t('wk.diff'+diff[0].toUpperCase()+diff.slice(1))}))}">${DIFF_ICON[diff]}</button>`;
@@ -2104,7 +2237,10 @@ function wkExBlock(entry){
     </div>
     <div class="bar-row" style="${mode==='plates'?'':'display:none'}">${t('wk.bar')} <input class="wk-bar" type="number" inputmode="decimal" step="0.5" min="0" max="100" value="${bar}"></div>
     <div class="wk-sets">${sets}</div>
-    <button class="btn ghost sm" data-action="wk-add-set">${t('wk.addSet')}</button>
+    <div class="frow">
+      <button class="btn ghost sm" data-action="wk-add-set" style="flex:1">${t('wk.addSet')}</button>
+      <button class="btn ghost sm" data-action="wk-quick-set" style="flex:1">${t('wk.quickSet')}</button>
+    </div>
   </div>`;
 }
 function renumberSets(block){
@@ -2358,6 +2494,223 @@ function openExerciseLibrary(){
   openModal(t('wk.exerciseLibrary'), `
     <p class="hint" style="margin-bottom:10px">${t('wk.libraryHint')}</p>
     ${rows}`, { noFoot: true });
+}
+
+/* ============================================================
+   Exercise picker — search, muscle groups, favorites, recents
+   ============================================================ */
+function recentExerciseIds(limit){
+  const seen = new Set(); const out = [];
+  [...state.workouts].sort((a,b) => dateMs(b.date) - dateMs(a.date)).forEach(w => {
+    w.entries.forEach(en => { if (!seen.has(en.exerciseId)){ seen.add(en.exerciseId); out.push(en.exerciseId); } });
+  });
+  return out.slice(0, limit || 8);
+}
+function pickerRow(ex){
+  const selected = pickerSelected.includes(ex.id);
+  return `<div class="picker-row">
+    <button class="star-btn ${ex.favorite ? 'on' : ''}" data-action="ex-toggle-fav" data-id="${ex.id}">${ex.favorite ? '★' : '☆'}</button>
+    <div class="pi-name">${esc(exName(ex))}${ex.equipment ? `<span class="pi-equip">${esc(ex.equipment)}</span>` : ''}</div>
+    <button class="pick-btn ${selected ? 'on' : ''}" data-action="ex-toggle-pick" data-id="${ex.id}">${selected ? '✓' : '+'}</button>
+  </div>`;
+}
+let pickerSelected = [];
+function renderPickerBody(){
+  const all = visibleExercises();
+  const favs = all.filter(e => e.favorite);
+  const recents = recentExerciseIds(8).map(id => getExercise(id)).filter(e => e && !e.hidden);
+  const byGroup = {};
+  all.forEach(e => { const g = e.muscleGroup || '_none'; (byGroup[g] = byGroup[g] || []).push(e); });
+
+  let html = `
+    <button class="btn ghost sm full" data-action="ex-picker-from-template" style="margin-bottom:12px">${t('wk.startFromTemplateShort')}</button>
+    <input type="text" class="picker-search" id="pickerSearch" placeholder="${esc(t('wk.searchExercise'))}" autocomplete="off">`;
+  if (favs.length) html += `<div class="picker-section">${t('wk.favorites')}</div>` + favs.map(pickerRow).join('');
+  if (recents.length) html += `<div class="picker-section">${t('wk.recentExercises')}</div>` + recents.map(pickerRow).join('');
+  MUSCLE_GROUPS.forEach(g => {
+    const list = byGroup[g.key];
+    if (list && list.length) html += `<div class="picker-section">${g.emoji} ${muscleGroupLabel(g.key)}</div>` + list.map(pickerRow).join('');
+  });
+  if (byGroup._none && byGroup._none.length) html += `<div class="picker-section">${t('wk.noMuscleGroup')}</div>` + byGroup._none.map(pickerRow).join('');
+  return html;
+}
+function renderPickerFoot(){
+  const chips = pickerSelected.map(id => {
+    const ex = getExercise(id);
+    if (!ex) return '';
+    return `<span class="picker-chip">${esc(exName(ex))}<button data-action="ex-toggle-pick" data-id="${id}">✕</button></span>`;
+  }).join('');
+  return `${chips ? `<div class="picker-chips">${chips}</div>` : ''}
+    <div class="frow" style="margin-top:4px">
+      <button class="btn ghost sm" data-action="modal-close" style="flex:1">${t('common.cancel')}</button>
+      <button class="btn sm" data-action="ex-picker-confirm" style="flex:2">${t('wk.startWorkoutN',{n:pickerSelected.length})}</button>
+    </div>`;
+}
+function filterPicker(q){
+  q = q.trim().toLowerCase();
+  document.querySelectorAll('.picker-row').forEach(row => {
+    const name = row.querySelector('.pi-name').textContent.toLowerCase();
+    row.style.display = (!q || name.includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('.picker-section').forEach(sec => {
+    let has = false, n = sec.nextElementSibling;
+    while (n && !n.classList.contains('picker-section')){
+      if (n.classList.contains('picker-row') && n.style.display !== 'none') has = true;
+      n = n.nextElementSibling;
+    }
+    sec.style.display = has ? '' : 'none';
+  });
+}
+function updatePickerFoot(){ $('#pickerFoot').innerHTML = renderPickerFoot(); }
+function openExercisePickerModal(){
+  pickerSelected = [];
+  openModal(t('wk.pickExercises'), `${renderPickerBody()}<div id="pickerFoot" style="margin-top:6px"></div>`, { noFoot: true });
+  updatePickerFoot();
+  $('#pickerSearch').addEventListener('input', e => filterPicker(e.target.value));
+}
+
+/* ============================================================
+   Live workout — real-time set-by-set tracking with a rest timer
+   ============================================================ */
+let liveWorkout = null; // { date, entries:[{exerciseId, sets:[{reps,weight,rpe,difficulty,done}]}] }
+let liveExIndex = 0;
+function startLiveWorkoutFromIds(ids){
+  if (!ids.length){ toast(t('wk.noExercisesSelected')); return; }
+  const entries = ids.map(exId => {
+    const tpl = (state.template || []).find(tp => tp.exerciseId === exId);
+    const prev = lastEntryFor(exId);
+    const nSets = tpl ? tpl.sets : (prev ? prev.sets.length : 3);
+    const sets = Array.from({ length: nSets }, (_, i) => {
+      const p = prev && prev.sets[i];
+      return { reps: p ? p.reps : (tpl ? tpl.reps : null), weight: p ? p.weight : null, rpe: null, difficulty: 'clean', done: false };
+    });
+    return { exerciseId: exId, sets };
+  });
+  liveWorkout = { date: todayISO(), entries };
+  liveExIndex = 0;
+  renderLiveWorkout();
+}
+function liveSetRowHTML(s, i){
+  return `<div class="live-set-row ${s.done ? 'done' : ''}">
+    <div class="live-set-top">
+      <button class="live-check" data-action="live-toggle-done" data-idx="${i}">✓</button>
+      <span class="set-label">${i+1}</span>
+      <div class="stepper">
+        <button data-action="live-step" data-idx="${i}" data-field="weight" data-delta="-2.5">−</button>
+        <div class="sv">${s.weight != null ? fmtNum(s.weight) : '—'}<div class="su">${t('common.kg')}</div></div>
+        <button data-action="live-step" data-idx="${i}" data-field="weight" data-delta="2.5">+</button>
+      </div>
+      <div class="stepper">
+        <button data-action="live-step" data-idx="${i}" data-field="reps" data-delta="-1">−</button>
+        <div class="sv">${s.reps != null ? fmtNum(s.reps,0) : '—'}<div class="su">${t('wk.reps')}</div></div>
+        <button data-action="live-step" data-idx="${i}" data-field="reps" data-delta="1">+</button>
+      </div>
+    </div>
+    <div class="rpe-row"><span style="font-size:11px;font-weight:700;color:var(--muted);align-self:center">${t('wk.rpe')}</span>${RPE_VALUES.map(v =>
+      `<button class="rpe-chip ${s.rpe===v?'on':''}" data-action="live-set-rpe" data-idx="${i}" data-rpe="${v}">${v}</button>`).join('')}</div>
+  </div>`;
+}
+function renderLiveWorkout(){
+  const entry = liveWorkout.entries[liveExIndex];
+  const ex = getExercise(entry.exerciseId);
+  if (!ex) return;
+  const prev = lastEntryFor(entry.exerciseId);
+  const pr = prMap()[entry.exerciseId];
+  const allDone = entry.sets.every(s => s.done);
+  const body = `
+    <div class="live-head">
+      <button class="nav-btn" data-action="live-nav" data-dir="-1" ${liveExIndex===0?'disabled':''}>›</button>
+      <div class="live-title">
+        <div class="ex-count">${t('wk.exerciseOf',{i:liveExIndex+1, n:liveWorkout.entries.length})}</div>
+        <div class="ex-name">${esc(exName(ex))}</div>
+        ${ex.equipment ? `<div class="ex-equip">${esc(ex.equipment)}</div>` : ''}
+      </div>
+      <button class="nav-btn" data-action="live-nav" data-dir="1" ${liveExIndex===liveWorkout.entries.length-1?'disabled':''}>‹</button>
+    </div>
+    ${ex.link ? `<div style="text-align:center;margin-bottom:10px"><a class="yt-btn" href="${esc(ex.link)}" target="_blank" rel="noopener">${t('wk.demo')}</a></div>` : ''}
+    <div class="live-stats">
+      ${prev ? `<span>${t('wk.previous')}: ${fmtNum(Math.max(...prev.sets.map(s=>s.reps||0)),0)}×${fmtNum(Math.max(...prev.sets.map(s=>s.weight||0)))}</span>` : ''}
+      ${pr ? `<span>🏆 ${fmtNum(pr.weight)} ${t('common.kg')}</span>` : ''}
+    </div>
+    <div id="liveSets">${entry.sets.map((s,i) => liveSetRowHTML(s,i)).join('')}</div>
+    <div class="frow">
+      <button class="btn ghost sm" data-action="live-add-set" style="flex:1">${t('wk.addSet')}</button>
+      <button class="btn ghost sm" data-action="live-quick-set" style="flex:1">${t('wk.quickSet')}</button>
+    </div>`;
+  const lastEx = liveExIndex === liveWorkout.entries.length - 1;
+  const footLabel = !allDone ? t('wk.finishSetStartRest') : (lastEx ? t('wk.finishWorkout') : t('wk.nextExercise'));
+  openModal(exName(ex), body, { noFoot: true });
+  $('#sheetFoot').style.display = 'flex';
+  $('#sheetFoot').innerHTML = `<button class="btn ghost" data-action="live-cancel">${t('common.cancel')}</button><button class="btn" data-action="live-primary">${footLabel}</button>`;
+}
+function finishLiveWorkout(){
+  const entries = liveWorkout.entries.map(en => ({
+    exerciseId: en.exerciseId,
+    sets: en.sets.filter(s => s.done && s.reps != null).map(s => ({
+      reps: Math.round(s.reps), weight: s.weight ?? 0, difficulty: s.difficulty || rpeToDifficulty(s.rpe), rpe: s.rpe ?? null
+    }))
+  })).filter(en => en.sets.length);
+  if (!entries.length){ toast(t('wk.noSets')); return; }
+  const before = prMapExcluding(null);
+  state.workouts.push({ id: uid(), date: liveWorkout.date, entries });
+  if (state.dayTypes[liveWorkout.date] === 'rest') delete state.dayTypes[liveWorkout.date];
+  save();
+  const newPrs = [];
+  entries.forEach(en => {
+    const maxW = Math.max(...en.sets.map(s => s.weight));
+    const prev = before[en.exerciseId];
+    if (maxW > 0 && (!prev || maxW > prev.weight)){
+      const ex = getExercise(en.exerciseId);
+      if (ex) newPrs.push({ name: exName(ex), weight: maxW });
+    }
+  });
+  liveWorkout = null;
+  closeModal();
+  renderWorkout();
+  toast(t('wk.liveWorkoutSaved'));
+  if (newPrs.length) setTimeout(() => celebratePR(newPrs[0]), 350);
+}
+
+/* ============================================================
+   Rest timer overlay
+   ============================================================ */
+let restTimer = null; // { id, remaining, total, paused }
+function startRestTimer(seconds, info){
+  if (restTimer) clearInterval(restTimer.id);
+  $('#restLabel').textContent = t('wk.rest');
+  $('#restSub').textContent = info ? t('wk.restSetDone', { i: info.i+1, n: info.total, reps: fmtNum(info.reps,0), weight: fmtNum(info.weight) }) : '';
+  $('#restHintText').textContent = t('wk.restTapDefault');
+  $('#restPauseBtn').textContent = t('wk.pause');
+  $('#restNextBtn').textContent = t('wk.skipRest');
+  $('#restMinus15').textContent = state.settings.lang === 'he' ? '15- שנ׳' : '−15s';
+  $('#restPlus15').textContent = state.settings.lang === 'he' ? '15+ שנ׳' : '+15s';
+  restTimer = { remaining: seconds, total: seconds, paused: false, id: null };
+  updateRestDigits();
+  $('#restOverlay').classList.add('open');
+  restTimer.id = setInterval(restTick, 1000);
+}
+function restTick(){
+  if (!restTimer || restTimer.paused) return;
+  restTimer.remaining--;
+  if (restTimer.remaining <= 0){
+    restTimer.remaining = 0;
+    clearInterval(restTimer.id);
+    try { navigator.vibrate && navigator.vibrate([200,100,200]); } catch(e){}
+    toast(t('wk.restDone'));
+  }
+  updateRestDigits();
+}
+function updateRestDigits(){
+  if (!restTimer) return;
+  const m = Math.floor(restTimer.remaining/60), s = restTimer.remaining%60;
+  $('#restDigits').textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  const pct = restTimer.total ? Math.max(0, restTimer.remaining/restTimer.total) : 0;
+  $('#restRing').style.background = `conic-gradient(var(--accent-2) ${pct*360}deg, rgba(255,255,255,.14) 0deg)`;
+}
+function closeRestTimer(){
+  if (restTimer) clearInterval(restTimer.id);
+  restTimer = null;
+  $('#restOverlay').classList.remove('open');
 }
 function openManageExercises(){
   const rows = visibleExercises().map(e => `
@@ -2643,6 +2996,118 @@ document.addEventListener('click', e => {
     }
     case 'toggle-pr-expand': prExpanded = !prExpanded; renderWorkout(); break;
     case 'wk-exercise-library': openExerciseLibrary(); break;
+    case 'wk-live-start': openExercisePickerModal(); break;
+    case 'ex-picker-from-template': {
+      closeModal();
+      startLiveWorkoutFromIds((state.template || []).map(tp => tp.exerciseId).filter(id => getExercise(id)));
+      break;
+    }
+    case 'ex-toggle-fav': {
+      const ex = getExercise(el.dataset.id);
+      if (ex){
+        ex.favorite = !ex.favorite; save();
+        el.textContent = ex.favorite ? '★' : '☆';
+        el.classList.toggle('on', ex.favorite);
+      }
+      break;
+    }
+    case 'ex-toggle-pick': {
+      const id = el.dataset.id;
+      const idx = pickerSelected.indexOf(id);
+      if (idx >= 0) pickerSelected.splice(idx, 1); else pickerSelected.push(id);
+      document.querySelectorAll(`.pick-btn[data-id="${id}"]`).forEach(b => {
+        b.classList.toggle('on', pickerSelected.includes(id));
+        b.textContent = pickerSelected.includes(id) ? '✓' : '+';
+      });
+      updatePickerFoot();
+      break;
+    }
+    case 'ex-picker-confirm': {
+      const ids = [...pickerSelected];
+      closeModal();
+      startLiveWorkoutFromIds(ids);
+      break;
+    }
+    case 'live-nav': {
+      const dir = +el.dataset.dir;
+      liveExIndex = Math.max(0, Math.min(liveWorkout.entries.length - 1, liveExIndex + dir));
+      renderLiveWorkout();
+      break;
+    }
+    case 'live-step': {
+      const entry = liveWorkout.entries[liveExIndex];
+      const i = +el.dataset.idx, field = el.dataset.field, delta = parseFloat(el.dataset.delta);
+      const s = entry.sets[i];
+      const cur = s[field] ?? 0;
+      s[field] = Math.max(0, Math.round((cur + delta) * 2) / 2);
+      renderLiveWorkout();
+      break;
+    }
+    case 'live-set-rpe': {
+      const entry = liveWorkout.entries[liveExIndex];
+      const i = +el.dataset.idx, rpe = +el.dataset.rpe;
+      const s = entry.sets[i];
+      s.rpe = s.rpe === rpe ? null : rpe;
+      s.difficulty = rpeToDifficulty(s.rpe);
+      renderLiveWorkout();
+      break;
+    }
+    case 'live-toggle-done': {
+      const entry = liveWorkout.entries[liveExIndex];
+      entry.sets[+el.dataset.idx].done = !entry.sets[+el.dataset.idx].done;
+      renderLiveWorkout();
+      break;
+    }
+    case 'live-add-set':
+      liveWorkout.entries[liveExIndex].sets.push({ reps:null, weight:null, rpe:null, difficulty:'clean', done:false });
+      renderLiveWorkout();
+      break;
+    case 'live-quick-set': {
+      const sets = liveWorkout.entries[liveExIndex].sets;
+      const last = sets[sets.length - 1];
+      sets.push({ reps: last ? last.reps : null, weight: last ? last.weight : null, rpe: null, difficulty:'clean', done:false });
+      renderLiveWorkout();
+      break;
+    }
+    case 'live-primary': {
+      const entry = liveWorkout.entries[liveExIndex];
+      const undoneIdx = entry.sets.findIndex(s => !s.done);
+      if (undoneIdx >= 0){
+        const s = entry.sets[undoneIdx];
+        s.done = true;
+        renderLiveWorkout();
+        startRestTimer(state.settings.restSeconds, { i: undoneIdx, total: entry.sets.length, reps: s.reps, weight: s.weight });
+      } else if (liveExIndex < liveWorkout.entries.length - 1){
+        liveExIndex++;
+        renderLiveWorkout();
+      } else {
+        finishLiveWorkout();
+      }
+      break;
+    }
+    case 'live-cancel':
+      if (confirm(t('common.deleteConfirm'))){ liveWorkout = null; closeModal(); renderWorkout(); }
+      break;
+    case 'rest-adjust': {
+      if (!restTimer) break;
+      const d = +el.dataset.delta;
+      restTimer.remaining = Math.max(0, restTimer.remaining + d);
+      restTimer.total = Math.max(restTimer.total, restTimer.remaining);
+      updateRestDigits();
+      break;
+    }
+    case 'rest-pause':
+      if (!restTimer) break;
+      restTimer.paused = !restTimer.paused;
+      $('#restPauseBtn').textContent = restTimer.paused ? t('wk.resume') : t('wk.pause');
+      break;
+    case 'rest-next': closeRestTimer(); break;
+    case 'rest-tap-ring': {
+      const v = prompt(t('wk.restTapDefault'), state.settings.restSeconds);
+      const n = parseNum(v);
+      if (n && n > 0 && n <= 600){ state.settings.restSeconds = Math.round(n); save(); }
+      break;
+    }
     case 'menu-view': menuView = el.dataset.mode; if (currentTab === 'home') renderHome(); else renderMenu(); break;
     case 'add-meal': openMealModal(null); break;
     case 'edit-meal': openMealModal(el.dataset.id); break;
@@ -2745,6 +3210,20 @@ document.addEventListener('click', e => {
       const block = el.closest('.wk-ex-block');
       const n = block.querySelectorAll('.wk-set').length;
       block.querySelector('.wk-sets').insertAdjacentHTML('beforeend', wkSetRow(null, n, block.dataset.mode, blockBar(block)));
+      break;
+    }
+    case 'wk-quick-set': {
+      const block = el.closest('.wk-ex-block');
+      const rows = block.querySelectorAll('.wk-set');
+      const n = rows.length;
+      const mode = block.dataset.mode, bar = blockBar(block);
+      const last = rows[n - 1];
+      const prefill = last ? {
+        reps: parseNum(last.querySelector('.ws-reps').value),
+        weight: rowWeight(last, mode, bar),
+        difficulty: last.querySelector('.diff-btn').dataset.diff
+      } : null;
+      block.querySelector('.wk-sets').insertAdjacentHTML('beforeend', wkSetRow(prefill, n, mode, bar));
       break;
     }
     case 'wk-remove-set': {
