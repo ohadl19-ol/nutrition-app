@@ -197,6 +197,7 @@ main{max-width:640px;margin:0 auto;padding:14px 16px 8px}
 }
 .btn:active{transform:scale(.97)}
 .btn.ghost{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn.ghost.on{background:var(--grad);color:#fff;border-color:transparent}
 .btn.danger{background:var(--bad);color:#fff}
 .btn.full{width:100%}
 .btn.sm{min-height:40px;padding:7px 14px;font-size:13.5px;border-radius:12px}
@@ -291,8 +292,9 @@ tr:last-child td{border-bottom:none}
 .live-set-row.done .live-check{background:var(--good);border-color:var(--good);color:#fff}
 .stepper{display:flex;align-items:center;gap:6px;flex:1}
 .stepper button{flex:none;width:30px;height:30px;min-height:30px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border);font-weight:800;font-size:15px}
-.stepper .sv{flex:1;text-align:center;font-weight:800;font-size:16px;font-variant-numeric:tabular-nums}
+.stepper .sv{flex:1;text-align:center;font-weight:800;font-size:16px;font-variant-numeric:tabular-nums;cursor:pointer}
 .stepper .su{font-size:10.5px;color:var(--muted);font-weight:600}
+.stepper .sv-input{flex:1;width:0;min-width:0;text-align:center;font-weight:800;font-size:16px;font-variant-numeric:tabular-nums;background:var(--surface-2);border:1px solid var(--accent-2);border-radius:8px;color:var(--text);padding:2px 0}
 .set-label{flex:none;width:20px;text-align:center;font-weight:800;color:var(--muted);font-size:12.5px}
 .rpe-row{display:flex;gap:5px;margin-top:8px;justify-content:flex-end}
 .rpe-chip{flex:none;min-width:32px;height:28px;min-height:28px;border-radius:8px;background:var(--surface-2);border:1px solid var(--border);font-size:12px;font-weight:700;color:var(--muted)}
@@ -2766,25 +2768,47 @@ function startLiveWorkoutFromIds(ids){
   liveExIndex = 0;
   renderLiveWorkout();
 }
-function liveSetRowHTML(s, i){
+function liveWeightDisplay(s, ex){
+  const perSide = ex.weightMode === 'perSide';
+  if (!perSide) return { val: s.weight != null ? fmtNum(s.weight) : '—', sub: t('common.kg') };
+  const bar = ex.barWeight ?? 20;
+  const side = s.weight != null ? (s.weight - bar) / 2 : null;
+  return { val: side != null ? fmtNum(side) : '—', sub: t('wk.perSide') + (s.weight != null ? ` · =${fmtNum(s.weight)}` : '') };
+}
+function liveSetRowHTML(s, i, ex){
+  const w = liveWeightDisplay(s, ex);
   return `<div class="live-set-row ${s.done ? 'done' : ''}">
     <div class="live-set-top">
       <button class="live-check" data-action="live-toggle-done" data-idx="${i}">✓</button>
       <span class="set-label" ${s.drop ? `title="${esc(t('wk.dropSet'))}"` : ''}>${s.drop ? '↓' : (i+1)}</span>
       <div class="stepper">
         <button data-action="live-step" data-idx="${i}" data-field="weight" data-delta="-2.5">−</button>
-        <div class="sv">${s.weight != null ? fmtNum(s.weight) : '—'}<div class="su">${t('common.kg')}</div></div>
+        <div class="sv" data-action="live-tap-value" data-idx="${i}" data-field="weight">${w.val}<div class="su">${w.sub}</div></div>
         <button data-action="live-step" data-idx="${i}" data-field="weight" data-delta="2.5">+</button>
       </div>
       <div class="stepper">
         <button data-action="live-step" data-idx="${i}" data-field="reps" data-delta="-1">−</button>
-        <div class="sv">${s.reps != null ? fmtNum(s.reps,0) : '—'}<div class="su">${t('wk.reps')}</div></div>
+        <div class="sv" data-action="live-tap-value" data-idx="${i}" data-field="reps">${s.reps != null ? fmtNum(s.reps,0) : '—'}<div class="su">${t('wk.reps')}</div></div>
         <button data-action="live-step" data-idx="${i}" data-field="reps" data-delta="1">+</button>
       </div>
     </div>
     <div class="rpe-row"><span style="font-size:11px;font-weight:700;color:var(--muted);align-self:center">${t('wk.rpe')}</span>${RPE_VALUES.map(v =>
       `<button class="rpe-chip ${s.rpe===v?'on':''}" data-action="live-set-rpe" data-idx="${i}" data-rpe="${v}">${v}</button>`).join('')}</div>
   </div>`;
+}
+function liveStepValue(i, field, delta){
+  const entry = liveWorkout.entries[liveExIndex];
+  const s = entry.sets[i];
+  const ex = getExercise(entry.exerciseId);
+  if (field === 'weight' && ex.weightMode === 'perSide'){
+    const bar = ex.barWeight ?? 20;
+    const curSide = s.weight != null ? (s.weight - bar) / 2 : 0;
+    const newSide = Math.max(0, Math.round((curSide + delta) * 2) / 2);
+    s.weight = 2 * newSide + bar;
+  } else {
+    const cur = s[field] ?? 0;
+    s[field] = Math.max(0, Math.round((cur + delta) * 2) / 2);
+  }
 }
 function renderLiveWorkout(){
   const entry = liveWorkout.entries[liveExIndex];
@@ -2805,11 +2829,16 @@ function renderLiveWorkout(){
     </div>
     <button class="btn ghost sm full" data-action="live-swap-open" style="margin-bottom:10px">🔄 ${t('wk.swapExercise')}</button>
     ${ex.link ? `<div style="text-align:center;margin-bottom:10px"><a class="yt-btn" href="${esc(ex.link)}" target="_blank" rel="noopener">${t('wk.demo')}</a></div>` : ''}
+    <div class="frow" style="margin-bottom:${ex.weightMode === 'perSide' ? '6px' : '10px'}">
+      <button class="btn ghost sm ${ex.weightMode!=='perSide'?'on':''}" data-action="live-weight-mode" data-mode="total" style="flex:1">${t('wk.entryTotal')}</button>
+      <button class="btn ghost sm ${ex.weightMode==='perSide'?'on':''}" data-action="live-weight-mode" data-mode="perSide" style="flex:1">${t('wk.entryPlates')}</button>
+    </div>
+    ${ex.weightMode === 'perSide' ? `<div class="bar-row" style="margin-bottom:10px">${t('wk.bar')} <input class="live-bar" type="number" inputmode="decimal" step="0.5" min="0" max="100" value="${ex.barWeight ?? 20}"></div>` : ''}
     <div class="live-stats">
       ${prev ? `<span>${t('wk.previous')}: ${fmtNum(Math.max(...prev.sets.map(s=>s.reps||0)),0)}×${fmtNum(Math.max(...prev.sets.map(s=>s.weight||0)))}</span>` : ''}
       ${pr ? `<span>🏆 ${fmtNum(pr.weight)} ${t('common.kg')}</span>` : ''}
     </div>
-    <div id="liveSets">${entry.sets.map((s,i) => liveSetRowHTML(s,i)).join('')}</div>
+    <div id="liveSets">${entry.sets.map((s,i) => liveSetRowHTML(s,i,ex)).join('')}</div>
     <div class="frow">
       <button class="btn ghost sm" data-action="live-add-set" style="flex:1">${t('wk.addSet')}</button>
       <button class="btn ghost sm" data-action="live-quick-set" style="flex:1">${t('wk.quickSet')}</button>
@@ -2874,9 +2903,11 @@ function renderRestNextSet(){
   const s = restTimer && entry && entry.sets[restTimer.nextSetIdx];
   if (!s){ box.style.display = 'none'; return; }
   box.style.display = '';
+  const ex = getExercise(entry.exerciseId);
+  const w = liveWeightDisplay(s, ex);
   $('#restNextLabel').textContent = t('wk.restNextSet', { n: restTimer.nextSetIdx + 1 });
-  $('#restNextWeight').firstChild.textContent = s.weight != null ? fmtNum(s.weight) : '—';
-  $('#restNextWeightUnit').textContent = t('common.kg');
+  $('#restNextWeight').firstChild.textContent = w.val;
+  $('#restNextWeightUnit').textContent = w.sub;
   $('#restNextReps').firstChild.textContent = s.reps != null ? fmtNum(s.reps,0) : '—';
   $('#restNextRepsUnit').textContent = t('wk.reps');
 }
@@ -3269,12 +3300,46 @@ document.addEventListener('click', e => {
       break;
     }
     case 'live-step': {
-      const entry = liveWorkout.entries[liveExIndex];
-      const i = +el.dataset.idx, field = el.dataset.field, delta = parseFloat(el.dataset.delta);
-      const s = entry.sets[i];
-      const cur = s[field] ?? 0;
-      s[field] = Math.max(0, Math.round((cur + delta) * 2) / 2);
+      liveStepValue(+el.dataset.idx, el.dataset.field, parseFloat(el.dataset.delta));
       renderLiveWorkout();
+      break;
+    }
+    case 'live-weight-mode': {
+      const ex = getExercise(liveWorkout.entries[liveExIndex].exerciseId);
+      ex.weightMode = el.dataset.mode === 'perSide' ? 'perSide' : 'total';
+      save();
+      renderLiveWorkout();
+      break;
+    }
+    case 'live-tap-value': {
+      const i = +el.dataset.idx, field = el.dataset.field;
+      const entry = liveWorkout.entries[liveExIndex];
+      const s = entry.sets[i];
+      const ex = getExercise(entry.exerciseId);
+      const perSide = field === 'weight' && ex.weightMode === 'perSide';
+      const bar = ex.barWeight ?? 20;
+      const current = field === 'weight'
+        ? (perSide ? (s.weight != null ? (s.weight - bar) / 2 : '') : (s.weight ?? ''))
+        : (s.reps ?? '');
+      const input = document.createElement('input');
+      input.type = 'number'; input.inputMode = 'decimal'; input.step = field === 'weight' ? '0.5' : '1';
+      input.className = 'sv-input'; input.value = current;
+      el.replaceWith(input);
+      input.focus(); input.select();
+      let committed = false;
+      const commit = () => {
+        if (committed) return;
+        committed = true;
+        const n = parseNum(input.value);
+        if (field === 'weight'){
+          s.weight = n == null ? null : Math.max(0, perSide ? 2 * n + bar : n);
+        } else {
+          s.reps = n == null ? null : Math.max(0, Math.round(n));
+        }
+        renderLiveWorkout();
+      };
+      input.addEventListener('blur', commit);
+      input.addEventListener('keydown', ev => { if (ev.key === 'Enter') input.blur(); });
       break;
     }
     case 'live-set-rpe': {
@@ -3350,11 +3415,8 @@ document.addEventListener('click', e => {
     case 'rest-next-step': {
       if (!restTimer || !liveWorkout) break;
       const entry = liveWorkout.entries[liveExIndex];
-      const s = entry && entry.sets[restTimer.nextSetIdx];
-      if (!s) break;
-      const field = el.dataset.field, delta = parseFloat(el.dataset.delta);
-      const cur = s[field] ?? 0;
-      s[field] = Math.max(0, Math.round((cur + delta) * 2) / 2);
+      if (!entry || !entry.sets[restTimer.nextSetIdx]) break;
+      liveStepValue(restTimer.nextSetIdx, el.dataset.field, parseFloat(el.dataset.delta));
       renderRestNextSet();
       break;
     }
@@ -3527,6 +3589,14 @@ document.addEventListener('change', e => {
     if (cookedView.has(id)) cookedView.delete(id); else cookedView.add(id);
     if (currentTab === 'home') renderHome(); else renderMenu();
   }
+  // bar weight for the live workout's "per side" entry mode
+  if (e.target.classList && e.target.classList.contains('live-bar') && liveWorkout){
+    const ex = getExercise(liveWorkout.entries[liveExIndex].exerciseId);
+    const n = parseNum(e.target.value);
+    ex.barWeight = n != null ? Math.max(0, n) : 20;
+    save();
+    renderLiveWorkout();
+  }
 });
 // live total in plates+bar entry mode
 document.addEventListener('input', e => {
@@ -3535,6 +3605,44 @@ document.addEventListener('input', e => {
     if (block) updateBlockTotals(block);
   }
 });
+// press-and-hold acceleration on weight/reps steppers, so reaching a far-off value doesn't need dozens of taps
+let stepHoldTimer = null, stepHoldInterval = null;
+function stopStepHold(){
+  if (stepHoldTimer) clearTimeout(stepHoldTimer);
+  if (stepHoldInterval) clearInterval(stepHoldInterval);
+  stepHoldTimer = null; stepHoldInterval = null;
+}
+function startStepHold(run){
+  stopStepHold();
+  let ticks = 0;
+  stepHoldTimer = setTimeout(() => {
+    stepHoldInterval = setInterval(() => {
+      ticks++;
+      run(ticks > 20 ? 4 : ticks > 8 ? 2 : 1);
+    }, 100);
+  }, 450);
+}
+function onStepPointerDown(e){
+  const liveBtn = e.target.closest('[data-action="live-step"]');
+  if (liveBtn && liveWorkout){
+    const i = +liveBtn.dataset.idx, field = liveBtn.dataset.field, delta = parseFloat(liveBtn.dataset.delta);
+    startStepHold(accel => { liveStepValue(i, field, delta * accel); renderLiveWorkout(); });
+    return;
+  }
+  const restBtn = e.target.closest('[data-action="rest-next-step"]');
+  if (restBtn && restTimer && liveWorkout){
+    const field = restBtn.dataset.field, delta = parseFloat(restBtn.dataset.delta);
+    startStepHold(accel => {
+      const entry = liveWorkout.entries[liveExIndex];
+      if (!entry || !entry.sets[restTimer.nextSetIdx]) return;
+      liveStepValue(restTimer.nextSetIdx, field, delta * accel);
+      renderRestNextSet();
+    });
+  }
+}
+document.addEventListener('mousedown', onStepPointerDown);
+document.addEventListener('touchstart', onStepPointerDown, { passive:true });
+['mouseup','mouseleave','touchend','touchcancel'].forEach(ev => document.addEventListener(ev, stopStepHold));
 $('#modalBack').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
 $('#themeToggle').addEventListener('click', () => setTheme(state.settings.theme === 'dark' ? 'light' : 'dark'));
 
