@@ -551,7 +551,7 @@ tr:last-child td{border-bottom:none}
    All data in localStorage under one key. No external runtime deps.
    ============================================================ */
 const LS_KEY = 'nutritionApp';
-const DATA_VERSION = 11;
+const DATA_VERSION = 12;
 
 /* ---------------- i18n ---------------- */
 const I18N = {
@@ -658,7 +658,7 @@ const I18N = {
     'ex.tbiceps':'יד קדמית — כפיפת מרפקים בעמידה',
     'ex.ttriceps':'יד אחורית — פשיטת מרפקים בפולי / מאחורי הראש',
     'ex.tabs':'בטן — כפיפות בטן על בוסו',
-    'ex.flat_bench':'לחיצת חזה במוט','ex.pushup':'שכיבות סמיכה','ex.incline_bench':'לחיצת חזה בשיפוע עליון','ex.dips':'מקבילים','ex.chest_fly':'פרפר בכבלים',
+    'ex.flat_bench':'לחיצת חזה במוט','ex.smith_bench':'לחיצת חזה בסמית׳ משין','ex.pushup':'שכיבות סמיכה','ex.incline_bench':'לחיצת חזה בשיפוע עליון','ex.dips':'מקבילים','ex.chest_fly':'פרפר בכבלים',
     'ex.lat_pulldown':'משיכת פולי עליון','ex.face_pull':'משיכת פנים','ex.seated_row':'חתירה בכבל בישיבה',
     'ex.bodyweight_squat':'סקוואט משקל גוף','ex.front_squat':'סקוואט קדמי','ex.rdl':'דדליפט רומני','ex.hip_thrust':'הרמת אגן','ex.leg_press':'לחיצת רגליים במכונה',
     'ex.leg_extension':'פשיטת ברכיים במכונה','ex.leg_curl':'כפיפת ברכיים במכונה','ex.db_lunge':'מכרעים עם משקולות',
@@ -779,7 +779,7 @@ const I18N = {
     'ex.tbiceps':'Biceps — standing curls',
     'ex.ttriceps':'Triceps — cable / overhead extensions',
     'ex.tabs':'Abs — crunches on bosu ball',
-    'ex.flat_bench':'Barbell bench press','ex.pushup':'Push-ups','ex.incline_bench':'Incline bench press','ex.dips':'Dips','ex.chest_fly':'Cable fly',
+    'ex.flat_bench':'Barbell bench press','ex.smith_bench':'Smith machine bench press','ex.pushup':'Push-ups','ex.incline_bench':'Incline bench press','ex.dips':'Dips','ex.chest_fly':'Cable fly',
     'ex.lat_pulldown':'Lat pulldown','ex.face_pull':'Face pull','ex.seated_row':'Seated cable row',
     'ex.bodyweight_squat':'Bodyweight squat','ex.front_squat':'Front squat','ex.rdl':'Romanian deadlift','ex.hip_thrust':'Hip thrust','ex.leg_press':'Leg press',
     'ex.leg_extension':'Leg extension','ex.leg_curl':'Leg curl','ex.db_lunge':'Dumbbell lunges',
@@ -876,6 +876,7 @@ function defaultTemplate(){
 function extraExercises(){
   return [
     { id:'flat_bench',        nameKey:'ex.flat_bench',        hidden:false, muscleGroup:'chest',     equipment:'מוט · מורכב' },
+    { id:'smith_bench',       nameKey:'ex.smith_bench',       hidden:false, muscleGroup:'chest',     equipment:'סמית׳ משין (ללא משקל מוט) · מורכב' },
     { id:'pushup',            nameKey:'ex.pushup',            hidden:false, muscleGroup:'chest',     equipment:'משקל גוף · מורכב' },
     { id:'incline_bench',     nameKey:'ex.incline_bench',     hidden:false, muscleGroup:'chest',     equipment:'מוט · מורכב' },
     { id:'dips',              nameKey:'ex.dips',              hidden:false, muscleGroup:'chest',     equipment:'משקל גוף · מורכב' },
@@ -1259,6 +1260,12 @@ function migrate(s){
       close_grip_bench:'triceps', cable_pushdown:'triceps', skull_crusher:'triceps', ttriceps:'triceps'
     };
     s.exercises.forEach(e => { if (reclass[e.id]) e.muscleGroup = reclass[e.id]; });
+  }
+  if ((s.version || 1) < 12){
+    // Smith machine bench press added to chest (its displayed weight excludes the bar)
+    defaultState().exercises.forEach(de => {
+      if (!s.exercises.some(e => e.id === de.id)) s.exercises.push(de);
+    });
   }
   s.version = DATA_VERSION;
   return s;
