@@ -2943,6 +2943,7 @@ function startRestTimer(seconds, info){
   restTimer.id = setInterval(restTick, 1000);
 }
 function renderRestNextSet(){
+  saveLiveDraft();
   const box = $('#restNextSet');
   const entry = liveWorkout && liveWorkout.entries[liveExIndex];
   const s = restTimer && entry && entry.sets[restTimer.nextSetIdx];
