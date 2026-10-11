@@ -574,6 +574,7 @@ tr:last-child td{border-bottom:none}
    All data in localStorage under one key. No external runtime deps.
    ============================================================ */
 const LS_KEY = 'nutritionApp';
+const LIVE_DRAFT_KEY = 'nutritionApp_liveDraft';
 const DATA_VERSION = 12;
 
 /* ---------------- i18n ---------------- */
@@ -634,6 +635,7 @@ const I18N = {
     'wk.restNextSet':'עדכון לסט {n} הבא',
     'wk.pause':'השהה','wk.resume':'המשך','wk.skipRest':'דלג על המנוחה','wk.restDone':'זמן המנוחה הסתיים! 💪',
     'wk.rpe':'RPE','wk.noExercisesSelected':'בחר/י לפחות תרגיל אחד','wk.liveWorkoutSaved':'האימון נשמר ✓',
+    'wk.draftFound':'נמצא אימון חי שלא הושלם — להמשיך מאיפה שעצרת?',
     'wk.muscleGroupSetting':'קבוצת שריר','wk.equipmentSetting':'ציוד (אופציונלי)',
     'wk.markDone':'סמן כבוצע','wk.allSetsDone':'כל הסטים הושלמו',
     'wk.maxWeight':'משקל מקסימלי','wk.volume':'נפח (סטים×חזרות×משקל)','wk.prs':'שיאים אישיים',
@@ -674,6 +676,7 @@ const I18N = {
     'ms.needNeck':'להצגת אחוז שומן יש להזין גובה והיקף צוואר בהגדרות',
     'wk.start':'התחל אימון','wk.template':'תבנית','wk.editTemplate':'עריכת תבנית אימון','wk.toFailure':'עד כשל',
     'wk.entryTotal':'משקל כולל','wk.entryPlates':'צלחות + מוט','wk.perSide':'בצד','wk.bar':'מוט (ק״ג):',
+    'wk.modeTotal':'כולל','wk.modeSide':'צד מוט','wk.modeDumbbell':'דמבל','wk.perDumbbell':'דמבל',
     'wk.fromTemplate':'האימון נוצר מהתבנית עם הערכים מהאימון הקודם — עדכן מה שהשתנה ושמור',
     'ex.tchest':'חזה — לחיצת חזה / שכיבות סמיכות / מקבילים',
     'ex.tback':'גב — מתח / פולי עליון אחיזה צרה',
@@ -756,6 +759,7 @@ const I18N = {
     'wk.restNextSet':'Update for next set {n}',
     'wk.pause':'Pause','wk.resume':'Resume','wk.skipRest':'Skip rest','wk.restDone':'Rest time is up! 💪',
     'wk.rpe':'RPE','wk.noExercisesSelected':'Choose at least one exercise','wk.liveWorkoutSaved':'Workout saved ✓',
+    'wk.draftFound':'An unfinished live workout was found — continue where you left off?',
     'wk.muscleGroupSetting':'Muscle group','wk.equipmentSetting':'Equipment (optional)',
     'wk.markDone':'Mark done','wk.allSetsDone':'All sets completed',
     'wk.maxWeight':'Max weight','wk.volume':'Volume (sets×reps×weight)','wk.prs':'Personal records',
@@ -796,6 +800,7 @@ const I18N = {
     'ms.needNeck':'Set height and neck circumference in Settings to see body fat',
     'wk.start':'Start workout','wk.template':'Template','wk.editTemplate':'Edit workout template','wk.toFailure':'To failure',
     'wk.entryTotal':'Total weight','wk.entryPlates':'Plates + bar','wk.perSide':'Per side','wk.bar':'Bar (kg):',
+    'wk.modeTotal':'Total','wk.modeSide':'Bar side','wk.modeDumbbell':'Dumbbell','wk.perDumbbell':'Dumbbell',
     'wk.fromTemplate':'Workout created from the template with your previous values — update what changed and save',
     'ex.tchest':'Chest — bench press / push-ups / dips',
     'ex.tback':'Back — pull-ups / close-grip pulldown',
@@ -2275,7 +2280,15 @@ function renderWorkout(){
       ${expanded ? exHTML : ''}</div>`;
   }).join('');
 
+  const draft = !liveWorkout ? loadLiveDraft() : null;
   $('#tab-workout').innerHTML = `
+    ${draft ? `<div class="view-banner">
+      <span>${esc(t('wk.draftFound'))}</span>
+      <div style="display:flex;gap:6px">
+        <button class="btn ghost sm" data-action="live-draft-discard">${t('common.delete')}</button>
+        <button class="btn sm" data-action="live-draft-resume">${t('wk.resume')}</button>
+      </div>
+    </div>` : ''}
     <button class="btn full" data-action="wk-live-start" style="margin-bottom:10px">${t('wk.liveWorkout')}</button>
     <div class="frow" style="margin-bottom:10px">
       <button class="btn ghost" data-action="wk-start" style="flex:2">🏋️ ${t('wk.start')}</button>
@@ -2743,6 +2756,21 @@ function openSwapExerciseModal(){
    Live workout — real-time set-by-set tracking with a rest timer
    ============================================================ */
 let liveWorkout = null; // { date, entries:[{exerciseId, sets:[{reps,weight,rpe,difficulty,done}]}] }
+// autosave so a live workout survives the app being closed/reloaded mid-session (e.g. iOS killing a backgrounded tab)
+function saveLiveDraft(){
+  if (!liveWorkout) return;
+  try { localStorage.setItem(LIVE_DRAFT_KEY, JSON.stringify({ liveWorkout, liveExIndex, savedAt: Date.now() })); } catch(e){}
+}
+function loadLiveDraft(){
+  try {
+    const raw = localStorage.getItem(LIVE_DRAFT_KEY);
+    if (!raw) return null;
+    const d = JSON.parse(raw);
+    if (!d || !d.liveWorkout || !Array.isArray(d.liveWorkout.entries) || !d.liveWorkout.entries.length) return null;
+    return d;
+  } catch(e){ return null; }
+}
+function clearLiveDraft(){ try { localStorage.removeItem(LIVE_DRAFT_KEY); } catch(e){} }
 let liveExIndex = 0;
 function sortByMuscleOrder(ids){
   const order = MUSCLE_GROUPS.map(g => g.key);
@@ -2768,9 +2796,17 @@ function startLiveWorkoutFromIds(ids){
   liveExIndex = 0;
   renderLiveWorkout();
 }
+// exercises typically done with dumbbells default to dumbbell entry unless the user picked a mode explicitly
+function effectiveWeightMode(ex){
+  return ex.weightMode || ((ex.equipment || '').includes('משקולות') ? 'dumbbell' : 'total');
+}
 function liveWeightDisplay(s, ex){
-  const perSide = ex.weightMode === 'perSide';
-  if (!perSide) return { val: s.weight != null ? fmtNum(s.weight) : '—', sub: t('common.kg') };
+  const mode = effectiveWeightMode(ex);
+  if (mode === 'total') return { val: s.weight != null ? fmtNum(s.weight) : '—', sub: t('common.kg') };
+  if (mode === 'dumbbell'){
+    const side = s.weight != null ? s.weight / 2 : null;
+    return { val: side != null ? fmtNum(side) : '—', sub: t('wk.perDumbbell') + (s.weight != null ? ` · =${fmtNum(s.weight)}` : '') };
+  }
   const bar = ex.barWeight ?? 20;
   const side = s.weight != null ? (s.weight - bar) / 2 : null;
   return { val: side != null ? fmtNum(side) : '—', sub: t('wk.perSide') + (s.weight != null ? ` · =${fmtNum(s.weight)}` : '') };
@@ -2800,23 +2836,30 @@ function liveStepValue(i, field, delta){
   const entry = liveWorkout.entries[liveExIndex];
   const s = entry.sets[i];
   const ex = getExercise(entry.exerciseId);
-  if (field === 'weight' && ex.weightMode === 'perSide'){
+  const mode = field === 'weight' ? effectiveWeightMode(ex) : null;
+  if (mode === 'perSide'){
     const bar = ex.barWeight ?? 20;
     const curSide = s.weight != null ? (s.weight - bar) / 2 : 0;
     const newSide = Math.max(0, Math.round((curSide + delta) * 2) / 2);
     s.weight = 2 * newSide + bar;
+  } else if (mode === 'dumbbell'){
+    const curSide = s.weight != null ? s.weight / 2 : 0;
+    const newSide = Math.max(0, Math.round((curSide + delta) * 2) / 2);
+    s.weight = 2 * newSide;
   } else {
     const cur = s[field] ?? 0;
     s[field] = Math.max(0, Math.round((cur + delta) * 2) / 2);
   }
 }
 function renderLiveWorkout(){
+  saveLiveDraft();
   const entry = liveWorkout.entries[liveExIndex];
   const ex = getExercise(entry.exerciseId);
   if (!ex) return;
   const prev = lastEntryFor(entry.exerciseId);
   const pr = prMap()[entry.exerciseId];
   const allDone = entry.sets.every(s => s.done);
+  const weightMode = effectiveWeightMode(ex);
   const body = `
     <div class="live-head">
       <button class="nav-btn" data-action="live-nav" data-dir="-1" ${liveExIndex===0?'disabled':''}>›</button>
@@ -2829,11 +2872,12 @@ function renderLiveWorkout(){
     </div>
     <button class="btn ghost sm full" data-action="live-swap-open" style="margin-bottom:10px">🔄 ${t('wk.swapExercise')}</button>
     ${ex.link ? `<div style="text-align:center;margin-bottom:10px"><a class="yt-btn" href="${esc(ex.link)}" target="_blank" rel="noopener">${t('wk.demo')}</a></div>` : ''}
-    <div class="frow" style="margin-bottom:${ex.weightMode === 'perSide' ? '6px' : '10px'}">
-      <button class="btn ghost sm ${ex.weightMode!=='perSide'?'on':''}" data-action="live-weight-mode" data-mode="total" style="flex:1">${t('wk.entryTotal')}</button>
-      <button class="btn ghost sm ${ex.weightMode==='perSide'?'on':''}" data-action="live-weight-mode" data-mode="perSide" style="flex:1">${t('wk.entryPlates')}</button>
+    <div class="frow" style="margin-bottom:${weightMode === 'perSide' ? '6px' : '10px'}">
+      <button class="btn ghost sm ${weightMode==='total'?'on':''}" data-action="live-weight-mode" data-mode="total" style="flex:1">${t('wk.modeTotal')}</button>
+      <button class="btn ghost sm ${weightMode==='perSide'?'on':''}" data-action="live-weight-mode" data-mode="perSide" style="flex:1">${t('wk.modeSide')}</button>
+      <button class="btn ghost sm ${weightMode==='dumbbell'?'on':''}" data-action="live-weight-mode" data-mode="dumbbell" style="flex:1">${t('wk.modeDumbbell')}</button>
     </div>
-    ${ex.weightMode === 'perSide' ? `<div class="bar-row" style="margin-bottom:10px">${t('wk.bar')} <input class="live-bar" type="number" inputmode="decimal" step="0.5" min="0" max="100" value="${ex.barWeight ?? 20}"></div>` : ''}
+    ${weightMode === 'perSide' ? `<div class="bar-row" style="margin-bottom:10px">${t('wk.bar')} <input class="live-bar" type="number" inputmode="decimal" step="0.5" min="0" max="100" value="${ex.barWeight ?? 20}"></div>` : ''}
     <div class="live-stats">
       ${prev ? `<span>${t('wk.previous')}: ${fmtNum(Math.max(...prev.sets.map(s=>s.reps||0)),0)}×${fmtNum(Math.max(...prev.sets.map(s=>s.weight||0)))}</span>` : ''}
       ${pr ? `<span>🏆 ${fmtNum(pr.weight)} ${t('common.kg')}</span>` : ''}
@@ -2862,6 +2906,7 @@ function finishLiveWorkout(){
   state.workouts.push({ id: uid(), date: liveWorkout.date, entries });
   if (state.dayTypes[liveWorkout.date] === 'rest') delete state.dayTypes[liveWorkout.date];
   save();
+  clearLiveDraft();
   const newPrs = [];
   entries.forEach(en => {
     const maxW = Math.max(...en.sets.map(s => s.weight));
@@ -3306,7 +3351,7 @@ document.addEventListener('click', e => {
     }
     case 'live-weight-mode': {
       const ex = getExercise(liveWorkout.entries[liveExIndex].exerciseId);
-      ex.weightMode = el.dataset.mode === 'perSide' ? 'perSide' : 'total';
+      ex.weightMode = ['perSide','dumbbell'].includes(el.dataset.mode) ? el.dataset.mode : 'total';
       save();
       renderLiveWorkout();
       break;
@@ -3316,10 +3361,14 @@ document.addEventListener('click', e => {
       const entry = liveWorkout.entries[liveExIndex];
       const s = entry.sets[i];
       const ex = getExercise(entry.exerciseId);
-      const perSide = field === 'weight' && ex.weightMode === 'perSide';
+      const mode = field === 'weight' ? effectiveWeightMode(ex) : null;
+      const perSide = mode === 'perSide';
+      const perDumbbell = mode === 'dumbbell';
       const bar = ex.barWeight ?? 20;
       const current = field === 'weight'
-        ? (perSide ? (s.weight != null ? (s.weight - bar) / 2 : '') : (s.weight ?? ''))
+        ? (perSide ? (s.weight != null ? (s.weight - bar) / 2 : '')
+           : perDumbbell ? (s.weight != null ? s.weight / 2 : '')
+           : (s.weight ?? ''))
         : (s.reps ?? '');
       const input = document.createElement('input');
       input.type = 'number'; input.inputMode = 'decimal'; input.step = field === 'weight' ? '0.5' : '1';
@@ -3332,7 +3381,7 @@ document.addEventListener('click', e => {
         committed = true;
         const n = parseNum(input.value);
         if (field === 'weight'){
-          s.weight = n == null ? null : Math.max(0, perSide ? 2 * n + bar : n);
+          s.weight = n == null ? null : Math.max(0, perSide ? 2 * n + bar : perDumbbell ? 2 * n : n);
         } else {
           s.reps = n == null ? null : Math.max(0, Math.round(n));
         }
@@ -3396,7 +3445,19 @@ document.addEventListener('click', e => {
       break;
     }
     case 'live-cancel':
-      if (confirm(t('common.deleteConfirm'))){ liveWorkout = null; closeModal(); renderWorkout(); }
+      if (confirm(t('common.deleteConfirm'))){ liveWorkout = null; clearLiveDraft(); closeModal(); renderWorkout(); }
+      break;
+    case 'live-draft-resume': {
+      const draft = loadLiveDraft();
+      if (!draft) break;
+      liveWorkout = draft.liveWorkout;
+      liveExIndex = draft.liveExIndex || 0;
+      renderLiveWorkout();
+      break;
+    }
+    case 'live-draft-discard':
+      clearLiveDraft();
+      renderWorkout();
       break;
     case 'rest-adjust': {
       if (!restTimer) break;
