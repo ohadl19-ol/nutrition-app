@@ -2780,18 +2780,30 @@ function sortByMuscleOrder(ids){
     return (ga < 0 ? 999 : ga) - (gb < 0 ? 999 : gb);
   });
 }
+// pre-fills a fresh exercise's sets from last time, nudged by the same progressive-overload
+// logic as the classic "start from template" flow, instead of just repeating the old numbers
+// without a declared template rep target there's no "ceiling" to climb toward, so suggest
+// trying a bit more weight at the same rep count instead of endlessly adding reps
+function nextCleanWeightBump(prevSet){
+  const diff = prevSet.difficulty || 'clean';
+  if (diff === 'failure') return { reps: prevSet.reps, weight: roundWeight(prevSet.weight * 0.9) };
+  if (diff === 'hard') return { reps: prevSet.reps, weight: prevSet.weight };
+  return { reps: prevSet.reps, weight: roundWeight(prevSet.weight + 2.5) };
+}
+function buildLiveSets(exId, fallbackCount){
+  const tpl = (state.template || []).find(tp => tp.exerciseId === exId);
+  const prev = lastEntryFor(exId);
+  const nSets = tpl ? tpl.sets : (prev ? prev.sets.length : fallbackCount);
+  return Array.from({ length: nSets }, (_, i) => {
+    const p = prev && prev.sets[i];
+    if (!p) return { reps: tpl ? tpl.reps : null, weight: null, rpe: null, difficulty: 'clean', done: false };
+    const sug = tpl ? nextSetSuggestion(p, tpl.reps) : nextCleanWeightBump(p);
+    return { reps: sug.reps, weight: sug.weight, rpe: null, difficulty: 'clean', done: false };
+  });
+}
 function startLiveWorkoutFromIds(ids){
   if (!ids.length){ toast(t('wk.noExercisesSelected')); return; }
-  const entries = sortByMuscleOrder(ids).map(exId => {
-    const tpl = (state.template || []).find(tp => tp.exerciseId === exId);
-    const prev = lastEntryFor(exId);
-    const nSets = tpl ? tpl.sets : (prev ? prev.sets.length : 3);
-    const sets = Array.from({ length: nSets }, (_, i) => {
-      const p = prev && prev.sets[i];
-      return { reps: p ? p.reps : (tpl ? tpl.reps : null), weight: p ? p.weight : null, rpe: null, difficulty: 'clean', done: false };
-    });
-    return { exerciseId: exId, sets };
-  });
+  const entries = sortByMuscleOrder(ids).map(exId => ({ exerciseId: exId, sets: buildLiveSets(exId, 3) }));
   liveWorkout = { date: todayISO(), entries };
   liveExIndex = 0;
   renderLiveWorkout();
@@ -3327,14 +3339,8 @@ document.addEventListener('click', e => {
     case 'live-swap-pick': {
       const newId = el.dataset.id;
       const entry = liveWorkout.entries[liveExIndex];
-      const tpl = (state.template || []).find(tp => tp.exerciseId === newId);
-      const prev = lastEntryFor(newId);
-      const nSets = tpl ? tpl.sets : (prev ? prev.sets.length : entry.sets.length);
       entry.exerciseId = newId;
-      entry.sets = Array.from({ length: nSets }, (_, i) => {
-        const p = prev && prev.sets[i];
-        return { reps: p ? p.reps : (tpl ? tpl.reps : null), weight: p ? p.weight : null, rpe: null, difficulty: 'clean', done: false };
-      });
+      entry.sets = buildLiveSets(newId, entry.sets.length);
       closeModal();
       renderLiveWorkout();
       break;
